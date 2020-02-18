@@ -28,7 +28,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.Set;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import static org.openhab.binding.spacetrack.internal.SpacetrackBindingConstants.CHANNEL_LAST_UPDATE;
 import static org.openhab.binding.spacetrack.internal.SpacetrackBindingConstants.THING_TYPE_BRIDGE;
@@ -164,19 +166,20 @@ public class SpacetrackBridgeHandler extends BaseBridgeHandler {
      */
     private void getSpacetrackData() {
         logger.error("getSpaceTrackData");
-       /* final OAuthClientService oAuthService = oAuthFactory.createOAuthClientService(thing.getUID().getAsString(),
-                API_URL_TOKEN, API_URL_TOKEN, bridgeConfiguration.clientId, bridgeConfiguration.clientSecret, null,
-                true);
-        this.oAuthService = oAuthService;
+        final ScheduledFuture<?> localReinitJob = reinitJob;
+        if (localReinitJob != null && !localReinitJob.isDone()) {
+            logger.debug("Scheduling reinitialize in {} hours - ignored: already triggered in {} hours.", bridgeConfiguration.tleUpdateTime,
+                    localReinitJob.getDelay(TimeUnit.SECONDS));
+            return;
+        }
 
-        if (checkOnAuthCode()) {
+        // TODO Get latest TLE!
 
-            client = localClient;
-            deviceStructMan = new DeviceStructureManager(localClient);
-            oAuthService.addAccessTokenRefreshListener(this);
-            registerDeviceStatusListener(InnogyBridgeHandler.this);
-            scheduleRestartClient(0);
-        }*/
+
+
+        logger.debug("Scheduling reinitialize in {} seconds.", bridgeConfiguration.tleUpdateTime);
+        reinitJob = scheduler.scheduleWithFixedDelay(this::getSpacetrackData, 0, bridgeConfiguration.tleUpdateTime,
+                TimeUnit.SECONDS);
     }
 
     /**

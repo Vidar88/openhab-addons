@@ -17,6 +17,7 @@ import org.apache.commons.lang.StringUtils;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.core.auth.client.oauth2.OAuthClientService;
+import org.eclipse.smarthome.core.library.types.DateTimeType;
 import org.eclipse.smarthome.core.thing.*;
 import org.eclipse.smarthome.core.thing.binding.BaseBridgeHandler;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
@@ -26,8 +27,11 @@ import org.openhab.binding.spacetrack.internal.client.SpacetrackClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -174,7 +178,7 @@ public class SpacetrackBridgeHandler extends BaseBridgeHandler {
         }
 
         // TODO Get latest TLE!
-
+        updateState(CHANNEL_LAST_UPDATE, new DateTimeType(ZonedDateTime.now()));
 
 
         logger.debug("Scheduling reinitialize in {} seconds.", bridgeConfiguration.tleUpdateTime);

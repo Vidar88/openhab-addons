@@ -94,6 +94,7 @@ public class InnogyBindingConstants {
     public static final String DEVICE_WSD = "WSD"; // wall mounted smoke detector
     public static final String DEVICE_WSD2 = "WSD2"; // wall mounted smoke detector
     public static final String DEVICE_WMD = "WMD"; // wall mounted motion detector indoor
+    public static final String DEVICE_BT_WMD = "BT-WMD"; // wall mounted motion detector indoor manufactured by medion
     public static final String DEVICE_WMDO = "WMDO"; // wall mounted motion detector outdoor
     public static final String DEVICE_WSC2 = "WSC2"; // wall mounted smart controller (2 buttons)
     public static final String DEVICE_BRC8 = "BRC8"; // basic remote controller (8 buttons)
@@ -110,7 +111,7 @@ public class InnogyBindingConstants {
             .of(DEVICE_SHC, DEVICE_SHCA, DEVICE_PSS, DEVICE_PSSO, DEVICE_BT_PSS, DEVICE_VARIABLE_ACTUATOR, DEVICE_RST,
                     DEVICE_RST2, DEVICE_WRT, DEVICE_WDS, DEVICE_ISS2, DEVICE_WSD, DEVICE_WSD2, DEVICE_WMD, DEVICE_WMDO,
                     DEVICE_WSC2, DEVICE_BRC8, DEVICE_ISC2, DEVICE_ISD2, DEVICE_ISR2, DEVICE_PSD, DEVICE_ANALOG_METER,
-                    DEVICE_GENERATION_METER, DEVICE_SMART_METER, DEVICE_TWO_WAY_METER)
+                    DEVICE_GENERATION_METER, DEVICE_SMART_METER, DEVICE_TWO_WAY_METER, DEVICE_BT_WMD)
             .collect(Collectors.toSet()));
 
     // List of all Thing Type UIDs
@@ -128,6 +129,7 @@ public class InnogyBindingConstants {
     public static final ThingTypeUID THING_TYPE_WSD = new ThingTypeUID(BINDING_ID, DEVICE_WSD);
     public static final ThingTypeUID THING_TYPE_WSD2 = new ThingTypeUID(BINDING_ID, DEVICE_WSD2);
     public static final ThingTypeUID THING_TYPE_WMD = new ThingTypeUID(BINDING_ID, DEVICE_WMD);
+    public static final ThingTypeUID THING_TYPE_BT_WMD = new ThingTypeUID(BINDING_ID, DEVICE_BT_WMD);
     public static final ThingTypeUID THING_TYPE_WMDO = new ThingTypeUID(BINDING_ID, DEVICE_WMDO);
     public static final ThingTypeUID THING_TYPE_WSC2 = new ThingTypeUID(BINDING_ID, DEVICE_WSC2);
     public static final ThingTypeUID THING_TYPE_BRC8 = new ThingTypeUID(BINDING_ID, DEVICE_BRC8);
@@ -146,7 +148,7 @@ public class InnogyBindingConstants {
                     THING_TYPE_RST2, THING_TYPE_WRT, THING_TYPE_WDS, THING_TYPE_ISS2, THING_TYPE_WSD, THING_TYPE_WSD2,
                     THING_TYPE_WMD, THING_TYPE_WMDO, THING_TYPE_WSC2, THING_TYPE_BRC8, THING_TYPE_ISC2, THING_TYPE_ISD2,
                     THING_TYPE_ISR2, THING_TYPE_PSD, THING_TYPE_ANALOG_METER, THING_TYPE_GENERATION_METER,
-                    THING_TYPE_SMART_METER, THING_TYPE_TWO_WAY_METER).collect(Collectors.toSet()));
+                    THING_TYPE_SMART_METER, THING_TYPE_TWO_WAY_METER, THING_TYPE_BT_WMD).collect(Collectors.toSet()));
 
     // List of all Channel ids
     public static final String CHANNEL_SWITCH = "switch";
@@ -157,6 +159,7 @@ public class InnogyBindingConstants {
     public static final String CHANNEL_SMOKE = "smoke";
     public static final String CHANNEL_ALARM = "alarm";
     public static final String CHANNEL_MOTION_COUNT = "motion_count";
+    public static final String CHANNEL_MOTION = "motion";
     public static final String CHANNEL_LUMINANCE = "luminance";
     public static final String CHANNEL_OPERATION_MODE = "operation_mode";
     public static final String CHANNEL_FROST_WARNING = "frost_warning";

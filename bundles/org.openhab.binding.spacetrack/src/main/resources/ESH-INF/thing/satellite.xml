@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="spacetrack"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
+
+	<!-- Satellite Thing Type -->
+	<thing-type id="satellite">
+		<label>Satellite</label>
+		<description>Satellite thing</description>
+
+		<channels>
+			<channel id="noradID" typeId="noradID" />
+		</channels>
+
+		<config-description>
+			<parameter name="noradID" type="text" required="true">
+				<label>NORAD ID</label>
+				<description>This is the NORAD ID of the satellite you want to track</description>
+			</parameter>
+		</config-description>
+
+	</thing-type>
+
+
+
+</thing:thing-descriptions>

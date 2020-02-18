@@ -30,6 +30,7 @@ public class Capability {
     public static final String TYPE_SMOKEDETECTORSENSOR = "SmokeDetectorSensor";
     public static final String TYPE_ALARMACTUATOR = "AlarmActuator";
     public static final String TYPE_MOTIONDETECTIONSENSOR = "MotionDetectionSensor";
+    public static final String TYPE_MEDIONMOTIONDETECTIONSENSOR = "MedionMotionDetectionSensor";
     public static final String TYPE_LUMINANCESENSOR = "LuminanceSensor";
     public static final String TYPE_PUSHBUTTONSENSOR = "PushButtonSensor";
     public static final String TYPE_DIMMERACTUATOR = "DimmerActuator";
@@ -252,6 +253,15 @@ public class Capability {
      */
     public boolean isTypeMotionDetectionSensor() {
         return TYPE_MOTIONDETECTIONSENSOR.equals(getType());
+    }
+
+    /**
+     * Returns true, if the {@link Capability} is of type MotionDetectionSensor.
+     *
+     * @return
+     */
+    public boolean isTypeMedionMotionDetectionSensor() {
+        return TYPE_MEDIONMOTIONDETECTIONSENSOR.equals(getType());
     }
 
     /**

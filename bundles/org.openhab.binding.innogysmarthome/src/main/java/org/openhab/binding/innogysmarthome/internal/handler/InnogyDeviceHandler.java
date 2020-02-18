@@ -1,13 +1,13 @@
 /**
  * Copyright (c) 2010-2020 Contributors to the openHAB project
- *
+ * <p>
  * See the NOTICE file(s) distributed with this work for additional
  * information.
- *
+ * <p>
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
  * http://www.eclipse.org/legal/epl-2.0
- *
+ * <p>
  * SPDX-License-Identifier: EPL-2.0
  */
 package org.openhab.binding.innogysmarthome.internal.handler;
@@ -562,6 +562,16 @@ public class InnogyDeviceHandler extends BaseThingHandler implements DeviceStatu
                                     c.getCapabilityState().getId(), c.getId());
                         }
                         break;
+                    case Capability.TYPE_MEDIONMOTIONDETECTIONSENSOR:
+                        final Boolean medionMotionState = c.getCapabilityState().getMedionMotionDetectionState();
+                        if (medionMotionState != null) {
+                            logger.debug("Motion state {}", medionMotionState);
+                            updateState(CHANNEL_MOTION, medionMotionState ? OnOffType.ON : OnOffType.OFF);
+                        } else {
+                            logger.debug("State for {} is STILL NULL!! cstate-id: {}, c-id: {}", c.getType(),
+                                    c.getCapabilityState().getId(), c.getId());
+                        }
+                        break;
                     case Capability.TYPE_LUMINANCESENSOR:
                         final Double luminanceState = c.getCapabilityState().getLuminanceSensorState();
                         if (luminanceState != null) {
@@ -586,7 +596,7 @@ public class InnogyDeviceHandler extends BaseThingHandler implements DeviceStatu
                                     final String triggerEvent = SHORT_PRESS.equals(type)
                                             ? CommonTriggerEvents.SHORT_PRESSED
                                             : (LONG_PRESS.equals(type) ? CommonTriggerEvents.LONG_PRESSED
-                                                    : CommonTriggerEvents.PRESSED);
+                                            : CommonTriggerEvents.PRESSED);
 
                                     triggerChannel(CHANNEL_BUTTON + channelIndex, triggerEvent);
                                     updateState(String.format(CHANNEL_BUTTON_COUNT, channelIndex), pushCount);
@@ -686,7 +696,7 @@ public class InnogyDeviceHandler extends BaseThingHandler implements DeviceStatu
      * @param capability
      */
     private void updateStateForEnergyChannel(final String channelId, @Nullable final Double state,
-            final Capability capability) {
+                                             final Capability capability) {
         if (state != null) {
             final DecimalType newValue = new DecimalType(state);
             updateState(channelId, newValue);
@@ -806,6 +816,11 @@ public class InnogyDeviceHandler extends BaseThingHandler implements DeviceStatu
                         // MotionDetectionSensor
                     } else if (capability.isTypeMotionDetectionSensor()) {
                         capabilityState.setMotionDetectionSensorState(event.getProperties().getMotionDetectedCount());
+                        deviceChanged = true;
+
+                        // MotionDetectedSensor
+                    } else if (capability.isTypeMedionMotionDetectionSensor()) {
+                        capabilityState.setMedionMotionDetectionSensorState(event.getProperties().getMotionDetected());
                         deviceChanged = true;
 
                         // LuminanceSensor

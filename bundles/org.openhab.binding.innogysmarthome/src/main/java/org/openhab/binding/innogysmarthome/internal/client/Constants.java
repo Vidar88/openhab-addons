@@ -30,7 +30,7 @@ public final class Constants {
 
     // devices
     public static final Set<String> BATTERY_POWERED_DEVICES = Collections.unmodifiableSet(
-            Stream.of("RST", "WRT", "WDS", "WSD", "WSD2", "WMD", "WMDO", "WSC2", "BRC8").collect(Collectors.toSet()));
+            Stream.of("RST", "WRT", "WDS", "WSD", "WSD2", "WMD", "WMDO", "WSC2", "BRC8", "BT-WMD").collect(Collectors.toSet()));
 
     // API URLs
     public static final String API_HOST = "api.services-smarthome.de";

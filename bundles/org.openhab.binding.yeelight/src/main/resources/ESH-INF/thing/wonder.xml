@@ -8,8 +8,10 @@
 		<description>Yeelight Color LED Bulb</description>
 
 		<channels>
+			<channel id="power" typeId="system.power" />
 			<channel id="color" typeId="color" />
 			<channel id="colorTemperature" typeId="colorTemperature" />
+			<channel id="brightness" typeId="brightness" />
 			<channel id="command" typeId="command" />
 		</channels>
 

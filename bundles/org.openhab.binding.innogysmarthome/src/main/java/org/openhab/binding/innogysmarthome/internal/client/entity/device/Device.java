@@ -47,6 +47,7 @@ public class Device {
     public static final String DEVICE_TYPE_VARIABLE_ACTUATOR = "VariableActuator";
     public static final String DEVICE_TYPE_WDS = "WDS";
     public static final String DEVICE_TYPE_WMD = "WMD";
+    public static final String DEVICE_TYPE_BT_WMD = "BT-WMD";
     public static final String DEVICE_TYPE_WMDO = "WMDO";
     public static final String DEVICE_TYPE_WRT = "WRT";
     public static final String DEVICE_TYPE_WSC2 = "WSC2";

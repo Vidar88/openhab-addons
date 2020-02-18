@@ -166,6 +166,14 @@ public class CapabilityState {
         getState().getMotionDetectedCountState().setValue(numberOfMotions);
     }
 
+    public Boolean getMedionMotionDetectionState() {
+        return getState().getMedionMotionDetectionState().getValue();
+    }
+
+    public void setMedionMotionDetectionSensorState(final Boolean value) {
+        getState().getMedionMotionDetectionState().setValue(value);
+    }
+
     public Double getLuminanceSensorState() {
         return getState().getLuminanceState().getValue();
     }

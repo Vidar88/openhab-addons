@@ -13,6 +13,8 @@
 package org.openhab.binding.innogysmarthome.internal.client;
 
 import static org.openhab.binding.innogysmarthome.internal.client.Constants.*;
+import static org.openhab.binding.innogysmarthome.internal.client.entity.capability.Capability.TYPE_MEDIONMOTIONDETECTIONSENSOR;
+import static org.openhab.binding.innogysmarthome.internal.client.entity.capability.Capability.TYPE_MOTIONDETECTIONSENSOR;
 
 import java.io.IOException;
 import java.net.URI;
@@ -456,6 +458,9 @@ public class InnogyClient {
             // capabilities and their states
             for (final String cl : d.getCapabilityLinkList()) {
                 final Capability c = capabilityMap.get(Link.getId(cl));
+                if (c.getType().equals(TYPE_MOTIONDETECTIONSENSOR) && d.getManufacturer().equals("Medion")) {
+                    c.setType(TYPE_MEDIONMOTIONDETECTIONSENSOR);
+                }
                 final String capabilityId = c.getId();
                 final CapabilityState capabilityState = capabilityStateMap.get(capabilityId);
                 c.setCapabilityState(capabilityState);

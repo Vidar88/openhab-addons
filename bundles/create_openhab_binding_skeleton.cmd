@@ -1,4 +1,3 @@
-@echo off
 
 SETLOCAL
 SET ARGC=0

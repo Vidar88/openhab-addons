@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="spacetrack"
+                          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                          xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+                          xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
+
+    <bridge-type id="bridge">
+        <label>Spacetrack Controller</label>
+        <description>The Space-Track.org website is the bridge for the spacetrack binding.</description>
+
+        <channels>
+            <channel id="lastUpdate" typeId="lastUpdate" />
+        </channels>
+
+        <config-description>
+            <parameter-group name="connection">
+                <label>Connection</label>
+                <description>Parameters for connecting to Space-Track.org</description>
+            </parameter-group>
+            <parameter-group name="advanced">
+                <label>Advanced Configuration</label>
+                <description>Advanced parameters, for special tweaking only.</description>
+                <advanced>true</advanced>
+            </parameter-group>
+
+            <parameter name="spacetrackUser" type="text" groupName="connection">
+                <required>true</required>
+                <label>Username</label>
+                <description>Username for connecting to Spacetrack.org</description>
+            </parameter>
+            <parameter name="spacetrackPass" type="text" groupName="connection">
+                <required>true</required>
+                <label>Password</label>
+                <description>Password for connecting to Spacetrack.org</description>
+            </parameter>
+            <parameter name="locationLat" type="text" groupName="connection">
+                <required>true</required>
+                <label>Latitude</label>
+                <description>Latitude of your location</description>
+            </parameter>
+            <parameter name="locationLon" type="text" groupName="connection">
+                <required>true</required>
+                <label>Longitude</label>
+                <description>Longitude of your location</description>
+            </parameter>
+            <parameter name="locationName" type="text" groupName="connection">
+                <required>false</required>
+                <label>Location name</label>
+                <description>Name of your location.</description>
+            </parameter>
+
+            <parameter name="tleUpdateTime" type="integer" min="1" max="168" unit="s" groupName="advanced">
+                <required>false</required>
+                <unitLabel>seconds</unitLabel>
+                <label>Update TLE every X hours</label>
+                <description>Time between updates of the TLE files. Please do not stress the Space-track.org server too much or you might risk a ban (See their API Use Guidelines: https://www.space-track.org/documentation). Default is 900 seconds (15 minutes).</description>
+                <default>24</default>
+                <advanced>true</advanced>
+            </parameter>
+        </config-description>
+    </bridge-type>
+
+
+</thing:thing-descriptions>

@@ -2,16 +2,17 @@ package org.openhab.binding.spacetrack.internal.client;
 
 import org.apache.commons.io.IOUtils;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.openhab.binding.spacetrack.internal.client.credential.DefaultCredentialProvider;
+import org.openhab.binding.spacetrack.internal.client.predicate.Equal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
-import java.nio.charset.Charset;
+import java.util.Collections;
+import java.util.List;
 
 import static org.openhab.binding.spacetrack.internal.SpacetrackBindingConstants.SPACETRACK_BASE_URL;
 
@@ -82,4 +83,14 @@ public class SpacetrackClient {
         return true;
     }
 
+    public List<LatestTleQuery.LatestTle> getTLEData() {
+        try {
+            DefaultCredentialProvider credentials = new DefaultCredentialProvider(this.username, this.password);
+            List<LatestTleQuery.LatestTle> list = new LatestTleQuery().setCredentials(credentials).addPredicate(new Equal<>(LatestTleQuery.LatestTleQueryField.ORDINAL, 1)).execute();
+            return list;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return Collections.emptyList();
+    }
 }

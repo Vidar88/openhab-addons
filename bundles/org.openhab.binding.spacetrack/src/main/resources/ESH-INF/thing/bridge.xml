@@ -49,9 +49,9 @@
                 <description>Name of your location.</description>
             </parameter>
 
-            <parameter name="tleUpdateTime" type="integer" min="1" max="168" unit="s" groupName="advanced">
+            <parameter name="tleUpdateTime" type="integer" min="1" max="168" unit="h" groupName="advanced">
                 <required>false</required>
-                <unitLabel>seconds</unitLabel>
+                <unitLabel>hours</unitLabel>
                 <label>Update TLE every X hours</label>
                 <description>Time between updates of the TLE files. Please do not stress the Space-track.org server too much or you might risk a ban (See their API Use Guidelines: https://www.space-track.org/documentation). Default is 900 seconds (15 minutes).</description>
                 <default>24</default>

@@ -43,4 +43,5 @@ public class SpacetrackBindingConstants {
     // List of all Channel ids
     public static final String CHANNEL_LAST_UPDATE = "lastUpdate";
     public static final String CHANNEL_NORAD_ID = "noradID";
+    public static final String CHANNEL_DISPLAY_NAME = "displayName";
 }

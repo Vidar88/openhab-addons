@@ -6,17 +6,28 @@
 
 	<!-- Satellite Thing Type -->
 	<thing-type id="satellite">
+		<supported-bridge-type-refs>
+			<bridge-type-ref id="bridge" />
+		</supported-bridge-type-refs>
+
+
 		<label>Satellite</label>
 		<description>Satellite thing</description>
 
 		<channels>
 			<channel id="noradID" typeId="noradID" />
+			<channel id="displayName" typeId="displayName" />
 		</channels>
 
 		<config-description>
 			<parameter name="noradID" type="text" required="true">
 				<label>NORAD ID</label>
 				<description>This is the NORAD ID of the satellite you want to track</description>
+			</parameter>
+
+			<parameter name="displayName" type="text" required="false">
+				<label>Display name</label>
+				<description>This is the Name you want to be displayed when using this thing. If this is empty, the NORAD ID will be used.</description>
 			</parameter>
 		</config-description>
 

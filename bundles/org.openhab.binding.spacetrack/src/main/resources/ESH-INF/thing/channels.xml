@@ -7,8 +7,17 @@
     <!--  noradID -->
     <channel-type id="noradID">
         <item-type>String</item-type>
-        <label>Spacetrack Binding Channel</label>
-        <description>Sample channel for Spacetrack Binding</description>
+        <label>NORAD ID Channel</label>
+        <description>NORAD ID of the satellite.</description>
+        <state readOnly="true" />
+    </channel-type>
+
+    <!--  displayName -->
+    <channel-type id="displayName">
+        <item-type>String</item-type>
+        <label>Display Name Channel</label>
+        <description>Channel for the display name of the satellite</description>
+        <state readOnly="true" />
     </channel-type>
 
     <!-- lastUpdate -->
@@ -17,6 +26,6 @@
         <label>Last TLE update</label>
         <description>Shows the time of the last TLE update.</description>
         <category>System</category>
-        <state readOnly="true"></state>
+        <state readOnly="true" />
     </channel-type>
 </thing:thing-descriptions>

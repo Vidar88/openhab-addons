@@ -173,7 +173,7 @@ public class SpacetrackBridgeHandler extends BaseBridgeHandler {
         final ScheduledFuture<?> localReinitJob = reinitJob;
         if (localReinitJob != null && !localReinitJob.isDone()) {
             logger.debug("Scheduling reinitialize in {} hours - ignored: already triggered in {} hours.", bridgeConfiguration.tleUpdateTime,
-                    localReinitJob.getDelay(TimeUnit.SECONDS));
+                    localReinitJob.getDelay(TimeUnit.HOURS));
             return;
         }
 
@@ -183,7 +183,7 @@ public class SpacetrackBridgeHandler extends BaseBridgeHandler {
 
         logger.debug("Scheduling reinitialize in {} seconds.", bridgeConfiguration.tleUpdateTime);
         reinitJob = scheduler.scheduleWithFixedDelay(this::getSpacetrackData, 0, bridgeConfiguration.tleUpdateTime,
-                TimeUnit.SECONDS);
+                TimeUnit.HOURS);
     }
 
     /**

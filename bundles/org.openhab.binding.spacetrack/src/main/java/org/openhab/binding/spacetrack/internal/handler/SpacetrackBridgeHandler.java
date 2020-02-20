@@ -1,17 +1,16 @@
 /**
  * Copyright (c) 2010-2020 Contributors to the openHAB project
- *
+ * <p>
  * See the NOTICE file(s) distributed with this work for additional
  * information.
- *
+ * <p>
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
  * http://www.eclipse.org/legal/epl-2.0
- *
+ * <p>
  * SPDX-License-Identifier: EPL-2.0
  */
 package org.openhab.binding.spacetrack.internal.handler;
-
 
 
 import org.apache.commons.lang.StringUtils;
@@ -24,22 +23,33 @@ import org.eclipse.smarthome.core.thing.binding.BaseBridgeHandler;
 
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
+import org.hipparchus.ode.events.Action;
 import org.hipparchus.util.FastMath;
 import org.openhab.binding.spacetrack.internal.client.LatestTleQuery;
 import org.openhab.binding.spacetrack.internal.client.SpacetrackClient;
+import org.orekit.bodies.BodyShape;
 import org.orekit.bodies.GeodeticPoint;
+import org.orekit.bodies.OneAxisEllipsoid;
+import org.orekit.frames.Frame;
+import org.orekit.frames.FramesFactory;
 import org.orekit.frames.TopocentricFrame;
+import org.orekit.propagation.SpacecraftState;
 import org.orekit.propagation.analytical.tle.TLE;
 import org.orekit.propagation.analytical.tle.TLEPropagator;
+import org.orekit.propagation.events.ElevationDetector;
+import org.orekit.propagation.events.EventDetector;
+import org.orekit.propagation.events.handlers.EventHandler;
+import org.orekit.time.AbsoluteDate;
+import org.orekit.time.TimeScale;
+import org.orekit.time.TimeScalesFactory;
+import org.orekit.time.UTCScale;
+import org.orekit.utils.IERSConventions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -59,7 +69,8 @@ public class SpacetrackBridgeHandler extends BaseBridgeHandler {
 
     private @Nullable SpacetrackBridgeConfiguration config;
 
-    private @NonNullByDefault({}) SpacetrackBridgeConfiguration bridgeConfiguration;
+    private @NonNullByDefault({})
+    SpacetrackBridgeConfiguration bridgeConfiguration;
     private @Nullable ScheduledFuture<?> reinitJob;
 
     public SpacetrackBridgeHandler(Bridge bridge) {
@@ -203,16 +214,46 @@ public class SpacetrackBridgeHandler extends BaseBridgeHandler {
 
         // TODO: Finally we got the data \o/ USE IT!
         for (LatestTleQuery.LatestTle tleEntry : tleData) {
-                TLE tle = new TLE(tleEntry.getTleLine1(), tleEntry.getTleLine2());
-                logger.error(tle.toString());
-                TLEPropagator propagator = TLEPropagator.selectExtrapolator(tle);
+            logger.error("Calculating overpass for Satellite {}", tleEntry.getCatalogNumber());
+            TLE tle = new TLE(tleEntry.getTleLine1(), tleEntry.getTleLine2());
 
-                double lat = FastMath.toRadians(Double.parseDouble(this.bridgeConfiguration.locationLat));
-                double lon = FastMath.toRadians(Double.parseDouble(this.bridgeConfiguration.locationLon));
-                double altitude = Double.parseDouble(this.bridgeConfiguration.locationAlt);
-                final GeodeticPoint geodeticPoint = new GeodeticPoint(lat, lon, altitude);
- 			    //final TopocentricFrame naiFrame = new TopocentricFrame(earth, geodeticPoint, "Station");
-                logger.error(geodeticPoint.toString());
+            Calendar calendar = Calendar.getInstance();
+
+            AbsoluteDate initialDate = new AbsoluteDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH),
+                    calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), calendar.get(Calendar.SECOND),
+                    TimeScalesFactory.getUTC());
+
+            TLEPropagator propagator = TLEPropagator.selectExtrapolator(tle);
+
+            // Earth and frame
+            double ae = 6378137.0; // equatorial radius in meter
+            double f = 1.0 / 298.257223563; // flattening
+            Frame ITRF2005 = FramesFactory.getITRF(IERSConventions.IERS_2010, true); // terrestrial frame at an arbitrary date
+            BodyShape earth = new OneAxisEllipsoid(ae, f, ITRF2005);
+
+            double lat = FastMath.toRadians(Double.parseDouble(this.bridgeConfiguration.locationLat));
+            double lon = FastMath.toRadians(Double.parseDouble(this.bridgeConfiguration.locationLon));
+            double altitude = Double.parseDouble(this.bridgeConfiguration.locationAlt);
+            final GeodeticPoint geodeticPoint = new GeodeticPoint(lat, lon, altitude);
+            TopocentricFrame stationFrame = new TopocentricFrame(earth, geodeticPoint, StringUtils.isBlank(this.bridgeConfiguration.locationName) ? "Home" : this.bridgeConfiguration.locationName);
+
+            // Event definition
+            final double maxcheck  = 60.0;
+            final double threshold =  0.001;
+            final double elevation = FastMath.toRadians(5.0);
+            final EventDetector homeVisible =
+                    new ElevationDetector(maxcheck, threshold, stationFrame).
+                            withConstantElevation(elevation).
+                            withHandler(new VisibilityHandler());
+
+
+            propagator.addEventDetector(homeVisible);
+
+            double propagateUntil = this.bridgeConfiguration.tleUpdateTime * 7200.0;
+            propagator.setSlaveMode();
+            SpacecraftState finalState = propagator.propagate(initialDate.shiftedBy(propagateUntil));
+
+            logger.error(finalState.toString());
 
 
         }
@@ -224,8 +265,6 @@ public class SpacetrackBridgeHandler extends BaseBridgeHandler {
     private TLE getTLEForNoradID(String noradID, List<LatestTleQuery.LatestTle> tleData) {
         for (LatestTleQuery.LatestTle tle : tleData) {
             if (tle.getCatalogNumber().toString().equals(noradID)) {
-                String line1 = tle.getTleLine1();
-                String line2 = tle.getTleLine2();
                 return new TLE(tle.getTleLine1(), tle.getTleLine2());
             }
         }
@@ -247,4 +286,29 @@ public class SpacetrackBridgeHandler extends BaseBridgeHandler {
 
         return true;
     }
+
+    private static class VisibilityHandler implements EventHandler<ElevationDetector> {
+
+        private final Logger logger = LoggerFactory.getLogger(VisibilityHandler.class);
+
+
+        public Action eventOccurred(final SpacecraftState s, final ElevationDetector detector,
+                                    final boolean increasing) {
+            if (increasing) {
+                logger.error(" Visibility on " + detector.getTopocentricFrame().getName()
+                        + " begins at " + s.getDate());
+                return Action.CONTINUE;
+            } else {
+                logger.error(" Visibility on " + detector.getTopocentricFrame().getName()
+                        + " ends at " + s.getDate());
+                return Action.STOP;
+            }
+        }
+
+        public SpacecraftState resetState(final ElevationDetector detector, final SpacecraftState oldState) {
+            return oldState;
+        }
+
+    }
+
 }

@@ -28,6 +28,7 @@ public class SpacetrackBridgeConfiguration {
 
     public String locationLat;
     public String locationLon;
+    public String locationAlt;
 
     public int tleUpdateTime;
 }

@@ -26,27 +26,32 @@
             <parameter name="spacetrackUser" type="text" groupName="connection">
                 <required>true</required>
                 <label>Username</label>
-                <description>Username for connecting to Spacetrack.org</description>
+                <description>Username for connecting to Spacetrack.org.</description>
             </parameter>
             <parameter name="spacetrackPass" type="text" groupName="connection">
                 <required>true</required>
                 <label>Password</label>
-                <description>Password for connecting to Spacetrack.org</description>
+                <description>Password for connecting to Spacetrack.org.</description>
             </parameter>
             <parameter name="locationLat" type="text" groupName="connection">
                 <required>true</required>
                 <label>Latitude</label>
-                <description>Latitude of your location</description>
+                <description>Latitude of your location.</description>
             </parameter>
             <parameter name="locationLon" type="text" groupName="connection">
                 <required>true</required>
                 <label>Longitude</label>
-                <description>Longitude of your location</description>
+                <description>Longitude of your location.</description>
+            </parameter>
+            <parameter name="locationAlt" type="text" groupName="connection">
+                <required>false</required>
+                <label>Altitude</label>
+                <description>Altitude of your location (optional).</description>
             </parameter>
             <parameter name="locationName" type="text" groupName="connection">
                 <required>false</required>
                 <label>Location name</label>
-                <description>Name of your location.</description>
+                <description>Name of your location (optional).</description>
             </parameter>
 
             <parameter name="tleUpdateTime" type="integer" min="1" max="168" unit="h" groupName="advanced">

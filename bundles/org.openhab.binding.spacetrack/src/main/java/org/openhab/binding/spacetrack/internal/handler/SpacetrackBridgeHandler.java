@@ -24,6 +24,7 @@ import org.eclipse.smarthome.core.thing.binding.BaseBridgeHandler;
 
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
+import org.hipparchus.util.FastMath;
 import org.openhab.binding.spacetrack.internal.client.LatestTleQuery;
 import org.openhab.binding.spacetrack.internal.client.SpacetrackClient;
 import org.orekit.bodies.GeodeticPoint;
@@ -133,25 +134,31 @@ public class SpacetrackBridgeHandler extends BaseBridgeHandler {
         boolean result = true;
         // Check if username is set
         if (StringUtils.isBlank(bridgeConfiguration.spacetrackUser)) {
-            logger.warn("Make sure to set a value for the field 'Username' in Bridge configuration!");
+            logger.error("Make sure to set a value for the field 'Username' in Bridge configuration!");
             result = false;
         }
 
         // Check if password is set
         if (StringUtils.isBlank(bridgeConfiguration.spacetrackPass)) {
-            logger.warn("Make sure to set a value for the field 'Password' in Bridge configuration!");
+            logger.error("Make sure to set a value for the field 'Password' in Bridge configuration!");
             result = false;
         }
 
         // Check if location lat is set
         if (StringUtils.isBlank(bridgeConfiguration.locationLat)) {
-            logger.warn("Make sure to set a value for the field 'Latitude' in Bridge configuration!");
+            logger.error("Make sure to set a value for the field 'Latitude' in Bridge configuration!");
             result = false;
         }
 
         // Check if location lon is set
         if (StringUtils.isBlank(bridgeConfiguration.locationLon)) {
-            logger.warn("Make sure to set a value for the field 'Longitude' in Bridge configuration!");
+            logger.error("Make sure to set a value for the field 'Longitude' in Bridge configuration!");
+            result = false;
+        }
+
+        // Check if location lon is set
+        if (StringUtils.isBlank(bridgeConfiguration.locationAlt)) {
+            logger.warn("Make sure to set a value for the field 'Altitude' in Bridge configuration for better propagation!");
             result = false;
         }
 
@@ -170,10 +177,9 @@ public class SpacetrackBridgeHandler extends BaseBridgeHandler {
     }
 
     /**
-     * Initializes the services and InnogyClient.
+     * Initializes the services and SpacetrackClient.
      */
     private void getSpacetrackData() {
-        logger.error("getSpaceTrackData");
         final ScheduledFuture<?> localReinitJob = reinitJob;
         if (localReinitJob != null && !localReinitJob.isDone()) {
             logger.error("Scheduling reinitialize in {} hours - ignored: already triggered in {} hours.", bridgeConfiguration.tleUpdateTime,
@@ -181,7 +187,7 @@ public class SpacetrackBridgeHandler extends BaseBridgeHandler {
             return;
         }
 
-
+        logger.error("getSpaceTrackData");
         List<String> noradIDs = new ArrayList<String>();
         for (Thing thing : getThing().getThings()) {
             noradIDs.add((String) thing.getConfiguration().get("noradID"));
@@ -199,10 +205,14 @@ public class SpacetrackBridgeHandler extends BaseBridgeHandler {
         for (LatestTleQuery.LatestTle tleEntry : tleData) {
                 TLE tle = new TLE(tleEntry.getTleLine1(), tleEntry.getTleLine2());
                 logger.error(tle.toString());
-                //TLEPropagator propagator = TLEPropagator.selectExtrapolator(tle);
+                TLEPropagator propagator = TLEPropagator.selectExtrapolator(tle);
 
-                //final GeodeticPoint geodeticPoint = new GeodeticPoint(lat, lon, altitude);
+                double lat = FastMath.toRadians(Double.parseDouble(this.bridgeConfiguration.locationLat));
+                double lon = FastMath.toRadians(Double.parseDouble(this.bridgeConfiguration.locationLon));
+                double altitude = Double.parseDouble(this.bridgeConfiguration.locationAlt);
+                final GeodeticPoint geodeticPoint = new GeodeticPoint(lat, lon, altitude);
  			    //final TopocentricFrame naiFrame = new TopocentricFrame(earth, geodeticPoint, "Station");
+                logger.error(geodeticPoint.toString());
 
 
         }

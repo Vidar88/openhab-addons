@@ -26,19 +26,23 @@ import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
 import org.openhab.binding.spacetrack.internal.client.LatestTleQuery;
 import org.openhab.binding.spacetrack.internal.client.SpacetrackClient;
+import org.orekit.bodies.GeodeticPoint;
+import org.orekit.frames.TopocentricFrame;
+import org.orekit.propagation.analytical.tle.TLE;
+import org.orekit.propagation.analytical.tle.TLEPropagator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import static org.openhab.binding.spacetrack.internal.SpacetrackBindingConstants.CHANNEL_LAST_UPDATE;
-import static org.openhab.binding.spacetrack.internal.SpacetrackBindingConstants.THING_TYPE_BRIDGE;
+import static org.openhab.binding.spacetrack.internal.SpacetrackBindingConstants.*;
 
 /**
  * The {@link SpacetrackBridgeHandler} is responsible for handling commands, which are
@@ -46,7 +50,6 @@ import static org.openhab.binding.spacetrack.internal.SpacetrackBindingConstants
  *
  * @author Michael Gregorius - Initial contribution
  */
-@NonNullByDefault
 public class SpacetrackBridgeHandler extends BaseBridgeHandler {
 
     public static final Set<ThingTypeUID> SUPPORTED_THING_TYPES = Collections.singleton(THING_TYPE_BRIDGE);
@@ -173,21 +176,50 @@ public class SpacetrackBridgeHandler extends BaseBridgeHandler {
         logger.error("getSpaceTrackData");
         final ScheduledFuture<?> localReinitJob = reinitJob;
         if (localReinitJob != null && !localReinitJob.isDone()) {
-            logger.debug("Scheduling reinitialize in {} hours - ignored: already triggered in {} hours.", bridgeConfiguration.tleUpdateTime,
+            logger.error("Scheduling reinitialize in {} hours - ignored: already triggered in {} hours.", bridgeConfiguration.tleUpdateTime,
                     localReinitJob.getDelay(TimeUnit.HOURS));
             return;
         }
 
+
+        List<String> noradIDs = new ArrayList<String>();
+        for (Thing thing : getThing().getThings()) {
+            noradIDs.add((String) thing.getConfiguration().get("noradID"));
+        }
+
+        String queryIDs = String.join(",", noradIDs);
+
         final SpacetrackClient client = new SpacetrackClient(bridgeConfiguration.spacetrackUser, bridgeConfiguration.spacetrackPass);
-        List<LatestTleQuery.LatestTle> tleData = client.getTLEData();
+        List<LatestTleQuery.LatestTle> tleData = client.getTLEData(queryIDs);
 
         // TODO: Finally we got the data \o/
         updateState(CHANNEL_LAST_UPDATE, new DateTimeType(ZonedDateTime.now()));
 
+        // TODO: Finally we got the data \o/ USE IT!
+        for (LatestTleQuery.LatestTle tleEntry : tleData) {
+                TLE tle = new TLE(tleEntry.getTleLine1(), tleEntry.getTleLine2());
+                logger.error(tle.toString());
+                //TLEPropagator propagator = TLEPropagator.selectExtrapolator(tle);
 
+                //final GeodeticPoint geodeticPoint = new GeodeticPoint(lat, lon, altitude);
+ 			    //final TopocentricFrame naiFrame = new TopocentricFrame(earth, geodeticPoint, "Station");
+
+
+        }
         logger.debug("Scheduling reinitialize in {} seconds.", bridgeConfiguration.tleUpdateTime);
         reinitJob = scheduler.scheduleWithFixedDelay(this::getSpacetrackData, 0, bridgeConfiguration.tleUpdateTime,
                 TimeUnit.HOURS);
+    }
+
+    private TLE getTLEForNoradID(String noradID, List<LatestTleQuery.LatestTle> tleData) {
+        for (LatestTleQuery.LatestTle tle : tleData) {
+            if (tle.getCatalogNumber().toString().equals(noradID)) {
+                String line1 = tle.getTleLine1();
+                String line2 = tle.getTleLine2();
+                return new TLE(tle.getTleLine1(), tle.getTleLine2());
+            }
+        }
+        return null;
     }
 
     /**

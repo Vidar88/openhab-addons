@@ -54,6 +54,14 @@ public class LatestTleQuery extends Query<LatestTleQuery.LatestTleQueryField, La
       }
     },
 
+    NORAD_CAT_ID {
+
+      @Override
+      public String getQueryFieldName() {
+        return "NORAD_CAT_ID";
+      }
+    },
+
     COMMENT {
 
       @Override

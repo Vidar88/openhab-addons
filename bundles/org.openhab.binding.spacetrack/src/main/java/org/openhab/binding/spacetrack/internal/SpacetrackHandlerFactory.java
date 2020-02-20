@@ -24,10 +24,15 @@ import org.eclipse.smarthome.core.thing.binding.ThingHandler;
 import org.eclipse.smarthome.core.thing.binding.ThingHandlerFactory;
 import org.openhab.binding.spacetrack.internal.handler.SpacetrackBridgeHandler;
 import org.openhab.binding.spacetrack.internal.handler.SpacetrackSatelliteHandler;
+import org.orekit.data.ClasspathCrawler;
+import org.orekit.data.DataProvidersManager;
+import org.orekit.data.DirectoryCrawler;
+import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -66,5 +71,14 @@ public class SpacetrackHandlerFactory extends BaseThingHandlerFactory implements
             logger.debug("Unsupported thing {}.", thing.getThingTypeUID());
             return null;
         }
+    }
+
+    @Override
+    protected void activate(ComponentContext componentContext) {
+        super.activate(componentContext);
+
+        // Load orekit initial data.
+        DataProvidersManager manager = DataProvidersManager.getInstance();
+        manager.addProvider(new ClasspathCrawler("orekit-data.zip"));
     }
 }

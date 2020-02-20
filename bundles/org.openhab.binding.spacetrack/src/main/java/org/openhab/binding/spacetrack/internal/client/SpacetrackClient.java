@@ -83,11 +83,10 @@ public class SpacetrackClient {
         return true;
     }
 
-    public List<LatestTleQuery.LatestTle> getTLEData() {
+    public List<LatestTleQuery.LatestTle> getTLEData(String queryIDs) {
         try {
             DefaultCredentialProvider credentials = new DefaultCredentialProvider(this.username, this.password);
-            List<LatestTleQuery.LatestTle> list = new LatestTleQuery().setCredentials(credentials).addPredicate(new Equal<>(LatestTleQuery.LatestTleQueryField.ORDINAL, 1)).execute();
-            return list;
+            return new LatestTleQuery().setCredentials(credentials).addPredicate(new Equal<>(LatestTleQuery.LatestTleQueryField.ORDINAL, 1)).addPredicate(new Equal<>(LatestTleQuery.LatestTleQueryField.NORAD_CAT_ID, queryIDs)).execute();
         } catch (IOException e) {
             e.printStackTrace();
         }

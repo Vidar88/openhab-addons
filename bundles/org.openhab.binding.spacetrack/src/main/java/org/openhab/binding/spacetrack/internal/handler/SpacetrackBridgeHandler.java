@@ -27,6 +27,7 @@ import org.hipparchus.ode.events.Action;
 import org.hipparchus.util.FastMath;
 import org.openhab.binding.spacetrack.internal.client.LatestTleQuery;
 import org.openhab.binding.spacetrack.internal.client.SpacetrackClient;
+import org.openhab.binding.spacetrack.internal.handler.detection.VisibilityHandler;
 import org.orekit.bodies.BodyShape;
 import org.orekit.bodies.GeodeticPoint;
 import org.orekit.bodies.OneAxisEllipsoid;
@@ -39,6 +40,7 @@ import org.orekit.propagation.analytical.tle.TLEPropagator;
 import org.orekit.propagation.events.ElevationDetector;
 import org.orekit.propagation.events.EventDetector;
 import org.orekit.propagation.events.handlers.EventHandler;
+import org.orekit.propagation.events.handlers.RecordAndContinue;
 import org.orekit.time.AbsoluteDate;
 import org.orekit.time.TimeScale;
 import org.orekit.time.TimeScalesFactory;
@@ -237,6 +239,7 @@ public class SpacetrackBridgeHandler extends BaseBridgeHandler {
             final GeodeticPoint geodeticPoint = new GeodeticPoint(lat, lon, altitude);
             TopocentricFrame stationFrame = new TopocentricFrame(earth, geodeticPoint, StringUtils.isBlank(this.bridgeConfiguration.locationName) ? "Home" : this.bridgeConfiguration.locationName);
 
+            VisibilityHandler visibilityHandler = new VisibilityHandler(initialDate);
             // Event definition
             final double maxcheck  = 60.0;
             final double threshold =  0.001;
@@ -244,14 +247,16 @@ public class SpacetrackBridgeHandler extends BaseBridgeHandler {
             final EventDetector homeVisible =
                     new ElevationDetector(maxcheck, threshold, stationFrame).
                             withConstantElevation(elevation).
-                            withHandler(new VisibilityHandler());
+                            withHandler(visibilityHandler);
 
 
             propagator.addEventDetector(homeVisible);
 
             double propagateUntil = this.bridgeConfiguration.tleUpdateTime * 7200.0;
             propagator.setSlaveMode();
-            SpacecraftState finalState = propagator.propagate(initialDate.shiftedBy(propagateUntil));
+            SpacecraftState finalState = propagator.propagate(initialDate, initialDate.shiftedBy(propagateUntil));
+
+            visibilityHandler.getEvents();
 
             logger.error(finalState.toString());
 
@@ -285,30 +290,6 @@ public class SpacetrackBridgeHandler extends BaseBridgeHandler {
         }
 
         return true;
-    }
-
-    private static class VisibilityHandler implements EventHandler<ElevationDetector> {
-
-        private final Logger logger = LoggerFactory.getLogger(VisibilityHandler.class);
-
-
-        public Action eventOccurred(final SpacecraftState s, final ElevationDetector detector,
-                                    final boolean increasing) {
-            if (increasing) {
-                logger.error(" Visibility on " + detector.getTopocentricFrame().getName()
-                        + " begins at " + s.getDate());
-                return Action.CONTINUE;
-            } else {
-                logger.error(" Visibility on " + detector.getTopocentricFrame().getName()
-                        + " ends at " + s.getDate());
-                return Action.STOP;
-            }
-        }
-
-        public SpacecraftState resetState(final ElevationDetector detector, final SpacecraftState oldState) {
-            return oldState;
-        }
-
     }
 
 }

@@ -17,6 +17,7 @@
 		<channels>
 			<channel id="noradID" typeId="noradID" />
 			<channel id="displayName" typeId="displayName" />
+			<channel id="directionImage" typeId="directionImage" />
 		</channels>
 
 		<config-description>

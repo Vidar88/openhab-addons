@@ -28,4 +28,13 @@
         <category>System</category>
         <state readOnly="true" />
     </channel-type>
+
+    <!-- directionImage -->
+    <channel-type id="directionImage">
+        <item-type>Image</item-type>
+        <label>Groundtrack</label>
+        <description>Shows ground track at your location to make spotting satellites easier!</description>
+        <category>System</category>
+        <state readOnly="true" />
+    </channel-type>
 </thing:thing-descriptions>

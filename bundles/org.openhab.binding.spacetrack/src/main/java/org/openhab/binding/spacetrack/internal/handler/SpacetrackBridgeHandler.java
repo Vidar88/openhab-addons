@@ -23,6 +23,7 @@ import org.eclipse.smarthome.core.thing.binding.BaseBridgeHandler;
 
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
+import org.eclipse.smarthome.core.types.State;
 import org.hipparchus.ode.events.Action;
 import org.hipparchus.util.FastMath;
 import org.openhab.binding.spacetrack.internal.client.LatestTleQuery;
@@ -257,6 +258,12 @@ public class SpacetrackBridgeHandler extends BaseBridgeHandler {
             SpacecraftState finalState = propagator.propagate(initialDate, initialDate.shiftedBy(propagateUntil));
 
             visibilityHandler.getEvents();
+
+            for (Thing thing : getThing().getThings()) {
+                if (thing.getConfiguration().get("noradID").equals(tleEntry.getCatalogNumber().toString())) {
+                    updateState(, State);
+                }
+            }
 
             logger.error(finalState.toString());
 

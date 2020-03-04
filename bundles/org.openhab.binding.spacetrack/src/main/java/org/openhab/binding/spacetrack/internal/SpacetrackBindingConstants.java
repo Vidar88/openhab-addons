@@ -44,4 +44,5 @@ public class SpacetrackBindingConstants {
     public static final String CHANNEL_LAST_UPDATE = "lastUpdate";
     public static final String CHANNEL_NORAD_ID = "noradID";
     public static final String CHANNEL_DISPLAY_NAME = "displayName";
+    public static final String CHANNEL_DIRECTION_IMAGE = "directionImage";
 }

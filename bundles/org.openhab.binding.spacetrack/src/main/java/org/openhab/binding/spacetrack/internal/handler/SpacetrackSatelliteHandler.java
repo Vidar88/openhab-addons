@@ -21,6 +21,7 @@ import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
+import org.eclipse.smarthome.core.types.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +58,10 @@ public class SpacetrackSatelliteHandler extends BaseThingHandler {
 
         if (command instanceof RefreshType) {
             updateSatelliteData(channelUID);
+        }
+
+        if (command instanceof StringType) {
+            updateState(channelUID, (StringType) command);
         }
 
         // TODO: handle command
@@ -141,5 +146,10 @@ public class SpacetrackSatelliteHandler extends BaseThingHandler {
                 updateState(entry.getKey(), new StringType((String) entry.getValue()));
             }
         }
+    }
+
+    @Override
+    protected void updateState(String channelID, State state) {
+        super.updateState(channelID, state);
     }
 }

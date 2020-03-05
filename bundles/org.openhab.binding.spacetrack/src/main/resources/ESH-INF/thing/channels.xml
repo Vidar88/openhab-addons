@@ -29,6 +29,15 @@
         <state readOnly="true" />
     </channel-type>
 
+    <!-- overpasses -->
+    <channel-type id="overpasses">
+        <item-type>String</item-type>
+        <label>Overpasses</label>
+        <description>Information about next overpasses.</description>
+        <category>System</category>
+        <state readOnly="true" />
+    </channel-type>
+
     <!-- directionImage -->
     <channel-type id="directionImage">
         <item-type>Image</item-type>

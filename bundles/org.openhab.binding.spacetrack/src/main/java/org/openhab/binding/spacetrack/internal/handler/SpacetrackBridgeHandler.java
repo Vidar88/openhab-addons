@@ -13,11 +13,13 @@
 package org.openhab.binding.spacetrack.internal.handler;
 
 
+import com.google.gson.Gson;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
 import org.eclipse.smarthome.core.library.types.DateTimeType;
+import org.eclipse.smarthome.core.library.types.StringType;
 import org.eclipse.smarthome.core.thing.*;
 import org.eclipse.smarthome.core.thing.binding.BaseBridgeHandler;
 
@@ -28,6 +30,7 @@ import org.hipparchus.ode.events.Action;
 import org.hipparchus.util.FastMath;
 import org.openhab.binding.spacetrack.internal.client.LatestTleQuery;
 import org.openhab.binding.spacetrack.internal.client.SpacetrackClient;
+import org.openhab.binding.spacetrack.internal.entity.JsonEvent;
 import org.openhab.binding.spacetrack.internal.handler.detection.VisibilityHandler;
 import org.orekit.bodies.BodyShape;
 import org.orekit.bodies.GeodeticPoint;
@@ -196,12 +199,12 @@ public class SpacetrackBridgeHandler extends BaseBridgeHandler {
     private void getSpacetrackData() {
         final ScheduledFuture<?> localReinitJob = reinitJob;
         if (localReinitJob != null && !localReinitJob.isDone()) {
-            logger.error("Scheduling reinitialize in {} hours - ignored: already triggered in {} hours.", bridgeConfiguration.tleUpdateTime,
+            logger.info("Scheduling reinitialize in {} hours - ignored: already triggered in {} hours.", bridgeConfiguration.tleUpdateTime,
                     localReinitJob.getDelay(TimeUnit.HOURS));
             return;
         }
 
-        logger.error("getSpaceTrackData");
+        logger.debug("getSpaceTrackData");
         List<String> noradIDs = new ArrayList<String>();
         for (Thing thing : getThing().getThings()) {
             noradIDs.add((String) thing.getConfiguration().get("noradID"));
@@ -215,9 +218,8 @@ public class SpacetrackBridgeHandler extends BaseBridgeHandler {
         // TODO: Finally we got the data \o/
         updateState(CHANNEL_LAST_UPDATE, new DateTimeType(ZonedDateTime.now()));
 
-        // TODO: Finally we got the data \o/ USE IT!
         for (LatestTleQuery.LatestTle tleEntry : tleData) {
-            logger.error("Calculating overpass for Satellite {}", tleEntry.getCatalogNumber());
+            //logger.error("Calculating overpass for Satellite {}", tleEntry.getCatalogNumber());
             TLE tle = new TLE(tleEntry.getTleLine1(), tleEntry.getTleLine2());
 
             Calendar calendar = Calendar.getInstance();
@@ -257,17 +259,28 @@ public class SpacetrackBridgeHandler extends BaseBridgeHandler {
             propagator.setSlaveMode();
             SpacecraftState finalState = propagator.propagate(initialDate, initialDate.shiftedBy(propagateUntil));
 
-            visibilityHandler.getEvents();
+            List<VisibilityHandler.Event<ElevationDetector>> overpassEvents = visibilityHandler.getEvents();
 
             for (Thing thing : getThing().getThings()) {
                 if (thing.getConfiguration().get("noradID").equals(tleEntry.getCatalogNumber().toString())) {
-                    updateState(, State);
+                    int index = 0;
+                    if (null != overpassEvents.get(0) && !overpassEvents.get(0).isIncreasing()) {
+                        index = 1;
+                    }
+                    List<JsonEvent> jsonEventList = new ArrayList();
+                    for (VisibilityHandler.Event<ElevationDetector> overpassEvent : overpassEvents) {
+                        JsonEvent event = new JsonEvent();
+                        event.setIncreasing(overpassEvent.isIncreasing());
+                        event.setDate(overpassEvent.getState().getDate().toString());
+                        event.setMu(overpassEvent.getState().getMu());
+                        event.setPosition(overpassEvent.getState().getPVCoordinates());
+                        jsonEventList.add(event);
+                    }
+                    String jsonOverpassEvents = new Gson().toJson(jsonEventList);
+                    SpacetrackSatelliteHandler handler = (SpacetrackSatelliteHandler) thing.getHandler();
+                    handler.updateState(CHANNEL_OVERPASSES, new StringType(jsonOverpassEvents));
                 }
             }
-
-            logger.error(finalState.toString());
-
-
         }
         logger.debug("Scheduling reinitialize in {} seconds.", bridgeConfiguration.tleUpdateTime);
         reinitJob = scheduler.scheduleWithFixedDelay(this::getSpacetrackData, 0, bridgeConfiguration.tleUpdateTime,

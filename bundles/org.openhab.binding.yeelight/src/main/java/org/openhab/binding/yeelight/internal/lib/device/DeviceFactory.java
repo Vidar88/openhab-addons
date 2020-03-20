@@ -69,6 +69,9 @@ public class DeviceFactory {
             case color:
                 device = new WonderDevice(bulbInfo.get("id"));
                 break;
+            case color4:
+                device = new WonderDevice(bulbInfo.get("id"));
+                break;
             case mono:
                 device = new MonoDevice(bulbInfo.get("id"));
                 break;

@@ -1,8 +1,6 @@
 package org.openhab.binding.spacetrack.internal.entity;
 
-import org.orekit.time.AbsoluteDate;
 import org.orekit.utils.PVCoordinates;
-
 
 public class JsonEvent {
 
@@ -10,7 +8,6 @@ public class JsonEvent {
     private String date;
     private double mu;
     private PVCoordinates position;
-
 
     public boolean isIncreasing() {
         return isIncreasing;

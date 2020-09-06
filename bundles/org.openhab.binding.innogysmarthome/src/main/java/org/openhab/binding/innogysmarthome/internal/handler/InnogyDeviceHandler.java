@@ -595,7 +595,7 @@ public class InnogyDeviceHandler extends BaseThingHandler implements DeviceStatu
                                     final String triggerEvent = SHORT_PRESS.equals(type)
                                             ? CommonTriggerEvents.SHORT_PRESSED
                                             : (LONG_PRESS.equals(type) ? CommonTriggerEvents.LONG_PRESSED
-                                            : CommonTriggerEvents.PRESSED);
+                                                    : CommonTriggerEvents.PRESSED);
 
                                     triggerChannel(CHANNEL_BUTTON + channelIndex, triggerEvent);
                                     updateState(String.format(CHANNEL_BUTTON_COUNT, channelIndex), pushCount);
@@ -694,7 +694,7 @@ public class InnogyDeviceHandler extends BaseThingHandler implements DeviceStatu
      * @param capability
      */
     private void updateStateForEnergyChannel(final String channelId, @Nullable final Double state,
-                                             final Capability capability) {
+            final Capability capability) {
         if (state != null) {
             final DecimalType newValue = new DecimalType(state);
             updateState(channelId, newValue);

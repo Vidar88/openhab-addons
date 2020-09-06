@@ -12,13 +12,13 @@
  */
 package org.openhab.binding.spacetrack.internal;
 
-import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.smarthome.core.thing.ThingTypeUID;
-
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.smarthome.core.thing.ThingTypeUID;
 
 /**
  * The {@link SpacetrackBindingConstants} class defines common constants, which are
@@ -37,8 +37,8 @@ public class SpacetrackBindingConstants {
     public static final ThingTypeUID THING_TYPE_BRIDGE = new ThingTypeUID(BINDING_ID, "bridge");
     public static final ThingTypeUID THING_TYPE_SATELLITE = new ThingTypeUID(BINDING_ID, "satellite");
 
-    public static final Set<ThingTypeUID> SUPPORTED_DEVICE_THING_TYPES = Collections.unmodifiableSet(
-            Stream.of(THING_TYPE_SATELLITE).collect(Collectors.toSet()));
+    public static final Set<ThingTypeUID> SUPPORTED_DEVICE_THING_TYPES = Collections
+            .unmodifiableSet(Stream.of(THING_TYPE_SATELLITE).collect(Collectors.toSet()));
 
     // List of all Channel ids
     public static final String CHANNEL_LAST_UPDATE = "lastUpdate";

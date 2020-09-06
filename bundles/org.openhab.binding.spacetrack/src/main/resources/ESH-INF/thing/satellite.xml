@@ -29,7 +29,8 @@
 
 			<parameter name="displayName" type="text" required="false">
 				<label>Display name</label>
-				<description>This is the Name you want to be displayed when using this thing. If this is empty, the NORAD ID will be used.</description>
+				<description>This is the Name you want to be displayed when using this thing. If this is empty, the NORAD ID will be
+					used.</description>
 			</parameter>
 		</config-description>
 

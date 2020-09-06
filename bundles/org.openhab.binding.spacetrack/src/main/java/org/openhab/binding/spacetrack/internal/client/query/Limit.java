@@ -13,10 +13,9 @@
  */
 package org.openhab.binding.spacetrack.internal.client.query;
 
-import org.eclipse.jdt.annotation.NonNull;
-
 import java.util.Optional;
 
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * A query clause for limiting the results returned from a query
@@ -26,66 +25,60 @@ import java.util.Optional;
 
 public class Limit {
 
-  public static final Limit ONE = new Limit(1);
-  public static final Limit TEN = new Limit(10);
+    public static final Limit ONE = new Limit(1);
+    public static final Limit TEN = new Limit(10);
 
+    private Integer maxResults;
+    private Optional<Integer> offset;
 
-  private Integer maxResults;
-  private Optional<Integer> offset;
+    public Limit(@NonNull Integer maxResults) {
 
+        // more validation
+        if (maxResults <= 0) {
+            throw new IllegalArgumentException("The maxResults parameter is not positive: " + maxResults);
+        }
 
-  public Limit(@NonNull Integer maxResults) {
-
-    // more validation
-    if (maxResults <= 0) {
-      throw new IllegalArgumentException("The maxResults parameter is not positive: " + maxResults);
+        this.maxResults = maxResults;
+        this.offset = Optional.empty();
     }
 
+    public Limit(@NonNull Integer maxResults, @NonNull Integer offset) {
 
-    this.maxResults = maxResults;
-    this.offset = Optional.empty();
-  }
+        // more validation
+        if (maxResults <= 0) {
+            throw new IllegalArgumentException("The maxResults parameter is not positive: " + maxResults);
+        } else if (offset < 0) {
+            throw new IllegalArgumentException("The offset is not >= 0: " + offset);
+        }
 
-
-  public Limit(@NonNull Integer maxResults, @NonNull Integer offset) {
-
-    // more validation
-    if (maxResults <= 0) {
-      throw new IllegalArgumentException("The maxResults parameter is not positive: " + maxResults);
-    } else if (offset < 0) {
-      throw new IllegalArgumentException("The offset is not >= 0: " + offset);
+        this.maxResults = maxResults;
+        this.offset = Optional.of(offset);
     }
 
+    public String toQueryParameter() {
 
-    this.maxResults = maxResults;
-    this.offset = Optional.of(offset);
-  }
+        String result = maxResults.toString();
 
+        if (offset.isPresent()) {
+            result += "," + offset.get().toString();
+        }
 
-  public String toQueryParameter() {
-
-    String result = maxResults.toString();
-
-    if (offset.isPresent()) {
-      result += "," + offset.get().toString();
+        return result;
     }
 
-    return result;
-  }
+    public static Limit getONE() {
+        return ONE;
+    }
 
-  public static Limit getONE() {
-    return ONE;
-  }
+    public static Limit getTEN() {
+        return TEN;
+    }
 
-  public static Limit getTEN() {
-    return TEN;
-  }
+    public Integer getMaxResults() {
+        return maxResults;
+    }
 
-  public Integer getMaxResults() {
-    return maxResults;
-  }
-
-  public Optional<Integer> getOffset() {
-    return offset;
-  }
+    public Optional<Integer> getOffset() {
+        return offset;
+    }
 }

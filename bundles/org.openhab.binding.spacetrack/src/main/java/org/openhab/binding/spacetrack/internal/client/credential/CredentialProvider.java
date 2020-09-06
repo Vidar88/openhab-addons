@@ -20,19 +20,18 @@ package org.openhab.binding.spacetrack.internal.client.credential;
  */
 public interface CredentialProvider {
 
-  /**
-   * The <a href="https://www.space-track.org/">Space-Track.org</a> user name to be used for queries
-   * 
-   * @return A non-null user name
-   */
-  public String getUserName();
+    /**
+     * The <a href="https://www.space-track.org/">Space-Track.org</a> user name to be used for queries
+     * 
+     * @return A non-null user name
+     */
+    public String getUserName();
 
-
-  /**
-   * The <a href="https://www.space-track.org/">Space-Track.org</a> password to be used for queries
-   * 
-   * @return A non-null password
-   */
-  public String getPassword();
+    /**
+     * The <a href="https://www.space-track.org/">Space-Track.org</a> password to be used for queries
+     * 
+     * @return A non-null password
+     */
+    public String getPassword();
 
 }

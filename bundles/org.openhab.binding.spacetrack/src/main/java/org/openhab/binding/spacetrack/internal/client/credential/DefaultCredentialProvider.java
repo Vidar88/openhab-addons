@@ -13,7 +13,6 @@
  */
 package org.openhab.binding.spacetrack.internal.client.credential;
 
-import jdk.nashorn.internal.objects.annotations.Getter;
 import org.eclipse.jdt.annotation.NonNull;
 
 /**
@@ -23,24 +22,24 @@ import org.eclipse.jdt.annotation.NonNull;
  */
 public class DefaultCredentialProvider implements CredentialProvider {
 
-  @NonNull
-  private String userName;
+    @NonNull
+    private String userName;
 
-  @NonNull
-  private String password;
+    @NonNull
+    private String password;
 
-  public DefaultCredentialProvider(String userName, String password) {
-    this.userName = userName;
-    this.password = password;
-  }
+    public DefaultCredentialProvider(String userName, String password) {
+        this.userName = userName;
+        this.password = password;
+    }
 
-  @Override
-  public String getUserName() {
-    return userName;
-  }
+    @Override
+    public String getUserName() {
+        return userName;
+    }
 
-  @Override
-  public String getPassword() {
-    return password;
-  }
+    @Override
+    public String getPassword() {
+        return password;
+    }
 }

@@ -13,10 +13,8 @@
  */
 package org.openhab.binding.spacetrack.internal.client.predicate;
 
-import org.eclipse.jdt.annotation.NonNull;
 
 import java.time.Duration;
-
 
 /**
  * A value that represents an offset from the current date/time
@@ -25,22 +23,22 @@ import java.time.Duration;
  */
 public class CurrentDateTimeOffset {
 
-  private Duration offset;
+    private Duration offset;
 
+    public String toQueryValue() {
 
-  public String toQueryValue() {
+        double offsetDays = offset.toMillis() / 86400000.0; // TODO: this assumes a certain number of seconds in a day,
+                                                            // which will not be correct on days with leap seconds
 
-    double offsetDays = offset.toMillis() / 86400000.0; // TODO: this assumes a certain number of seconds in a day, which will not be correct on days with leap seconds
-
-    if (offsetDays < 0.0) {
-      return "now" + offsetDays; // no hyphen is needed because the offset is negative
-    } else {
-      return "now+" + offsetDays;
+        if (offsetDays < 0.0) {
+            return "now" + offsetDays; // no hyphen is needed because the offset is negative
+        } else {
+            return "now+" + offsetDays;
+        }
     }
-  }
 
-  public Duration getOffset() {
-    return offset;
-  }
+    public Duration getOffset() {
+        return offset;
+    }
 
 }

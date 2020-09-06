@@ -15,6 +15,6 @@ package org.openhab.binding.spacetrack.internal.client.query;
 
 public interface QueryField {
 
-  public String getQueryFieldName();
+    public String getQueryFieldName();
 
 }

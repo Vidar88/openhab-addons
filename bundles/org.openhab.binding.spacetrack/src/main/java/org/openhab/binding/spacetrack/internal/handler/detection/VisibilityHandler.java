@@ -1,18 +1,17 @@
 package org.openhab.binding.spacetrack.internal.handler.detection;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.hipparchus.ode.events.Action;
 import org.orekit.propagation.SpacecraftState;
 import org.orekit.propagation.events.ElevationDetector;
 import org.orekit.propagation.events.EventDetector;
 import org.orekit.propagation.events.handlers.EventHandler;
-import org.orekit.propagation.events.handlers.RecordAndContinue;
 import org.orekit.time.AbsoluteDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class VisibilityHandler implements EventHandler<ElevationDetector> {
 
@@ -29,17 +28,19 @@ public class VisibilityHandler implements EventHandler<ElevationDetector> {
     /**
      * Get the events passed to this handler.
      *
-     * <p> Note the returned list of events is in the order the events were
+     * <p>
+     * Note the returned list of events is in the order the events were
      * passed to this handler by calling eventOccurred. This may or may not be chronological order.
      *
-     * <p> Also not that this method returns a view of the internal collection
+     * <p>
+     * Also not that this method returns a view of the internal collection
      * used to store events and calling any of this handler's methods may modify
      * both the underlying collection and the returned view. If a snapshot of
      * the events up to a certain point is needed create a copy of the returned
      * collection.
      *
      * @return the events observed by the handler in the order they were
-     * observed.
+     *         observed.
      */
     public List<Event<ElevationDetector>> getEvents() {
         return Collections.unmodifiableList(this.events);
@@ -51,8 +52,7 @@ public class VisibilityHandler implements EventHandler<ElevationDetector> {
     }
 
     @Override
-    public Action eventOccurred(final SpacecraftState s, final ElevationDetector detector,
-                                final boolean increasing) {
+    public Action eventOccurred(final SpacecraftState s, final ElevationDetector detector, final boolean increasing) {
         events.add(new Event<ElevationDetector>(detector, s, increasing));
         return Action.CONTINUE;
     }
@@ -74,13 +74,11 @@ public class VisibilityHandler implements EventHandler<ElevationDetector> {
         /**
          * Create a new event.
          *
-         * @param detector   of the event.
-         * @param state      of the event.
+         * @param detector of the event.
+         * @param state of the event.
          * @param increasing if the g function is increasing.
          */
-        private Event(final T detector,
-                      final SpacecraftState state,
-                      final boolean increasing) {
+        private Event(final T detector, final SpacecraftState state, final boolean increasing) {
             this.detector = detector;
             this.state = state;
             this.increasing = increasing;
@@ -91,7 +89,7 @@ public class VisibilityHandler implements EventHandler<ElevationDetector> {
          *
          * @return the detector that found the event.
          * @see EventHandler#eventOccurred(SpacecraftState, EventDetector,
-         * boolean)
+         *      boolean)
          */
         public T getDetector() {
             return detector;
@@ -101,9 +99,9 @@ public class VisibilityHandler implements EventHandler<ElevationDetector> {
          * Is the g() function increasing?
          *
          * @return if the sign of the derivative of the g function is positive
-         * (true) or negative (false).
+         *         (true) or negative (false).
          * @see EventHandler#eventOccurred(SpacecraftState, EventDetector,
-         * boolean)
+         *      boolean)
          */
         public boolean isIncreasing() {
             return increasing;
@@ -114,7 +112,7 @@ public class VisibilityHandler implements EventHandler<ElevationDetector> {
          *
          * @return the satellite's state when the event was triggered.
          * @see EventHandler#eventOccurred(SpacecraftState, EventDetector,
-         * boolean)
+         *      boolean)
          */
         public SpacecraftState getState() {
             return state;
@@ -122,11 +120,7 @@ public class VisibilityHandler implements EventHandler<ElevationDetector> {
 
         @Override
         public String toString() {
-            return "Event{" +
-                    "state=" + state +
-                    ", increasing=" + increasing +
-                    ", detector=" + detector +
-                    '}';
+            return "Event{" + "state=" + state + ", increasing=" + increasing + ", detector=" + detector + '}';
         }
     }
 

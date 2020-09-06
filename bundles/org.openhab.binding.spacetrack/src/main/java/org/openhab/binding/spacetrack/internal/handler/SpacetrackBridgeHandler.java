@@ -12,21 +12,22 @@
  */
 package org.openhab.binding.spacetrack.internal.handler;
 
+import static org.openhab.binding.spacetrack.internal.SpacetrackBindingConstants.*;
 
-import com.google.gson.Gson;
+import java.time.ZonedDateTime;
+import java.util.*;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-
 import org.eclipse.smarthome.core.library.types.DateTimeType;
 import org.eclipse.smarthome.core.library.types.StringType;
 import org.eclipse.smarthome.core.thing.*;
 import org.eclipse.smarthome.core.thing.binding.BaseBridgeHandler;
-
 import org.eclipse.smarthome.core.types.Command;
 import org.eclipse.smarthome.core.types.RefreshType;
-import org.eclipse.smarthome.core.types.State;
-import org.hipparchus.ode.events.Action;
 import org.hipparchus.util.FastMath;
 import org.openhab.binding.spacetrack.internal.client.LatestTleQuery;
 import org.openhab.binding.spacetrack.internal.client.SpacetrackClient;
@@ -43,23 +44,13 @@ import org.orekit.propagation.analytical.tle.TLE;
 import org.orekit.propagation.analytical.tle.TLEPropagator;
 import org.orekit.propagation.events.ElevationDetector;
 import org.orekit.propagation.events.EventDetector;
-import org.orekit.propagation.events.handlers.EventHandler;
-import org.orekit.propagation.events.handlers.RecordAndContinue;
 import org.orekit.time.AbsoluteDate;
-import org.orekit.time.TimeScale;
 import org.orekit.time.TimeScalesFactory;
-import org.orekit.time.UTCScale;
 import org.orekit.utils.IERSConventions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-import java.time.ZonedDateTime;
-import java.util.*;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-
-import static org.openhab.binding.spacetrack.internal.SpacetrackBindingConstants.*;
+import com.google.gson.Gson;
 
 /**
  * The {@link SpacetrackBridgeHandler} is responsible for handling commands, which are
@@ -75,8 +66,7 @@ public class SpacetrackBridgeHandler extends BaseBridgeHandler {
 
     private @Nullable SpacetrackBridgeConfiguration config;
 
-    private @NonNullByDefault({})
-    SpacetrackBridgeConfiguration bridgeConfiguration;
+    private @NonNullByDefault({}) SpacetrackBridgeConfiguration bridgeConfiguration;
     private @Nullable ScheduledFuture<?> reinitJob;
 
     public SpacetrackBridgeHandler(Bridge bridge) {
@@ -175,7 +165,8 @@ public class SpacetrackBridgeHandler extends BaseBridgeHandler {
 
         // Check if location lon is set
         if (StringUtils.isBlank(bridgeConfiguration.locationAlt)) {
-            logger.warn("Make sure to set a value for the field 'Altitude' in Bridge configuration for better propagation!");
+            logger.warn(
+                    "Make sure to set a value for the field 'Altitude' in Bridge configuration for better propagation!");
             result = false;
         }
 
@@ -185,8 +176,8 @@ public class SpacetrackBridgeHandler extends BaseBridgeHandler {
         }
 
         if (!checkSpacetrackAuth(bridgeConfiguration)) {
-            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "Invalid Spacetrack credentials." +
-                    " Make sure to set a valid username and password in the bridge configuration!");
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "Invalid Spacetrack credentials."
+                    + " Make sure to set a valid username and password in the bridge configuration!");
             result = false;
         }
 
@@ -199,8 +190,8 @@ public class SpacetrackBridgeHandler extends BaseBridgeHandler {
     private void getSpacetrackData() {
         final ScheduledFuture<?> localReinitJob = reinitJob;
         if (localReinitJob != null && !localReinitJob.isDone()) {
-            logger.info("Scheduling reinitialize in {} hours - ignored: already triggered in {} hours.", bridgeConfiguration.tleUpdateTime,
-                    localReinitJob.getDelay(TimeUnit.HOURS));
+            logger.info("Scheduling reinitialize in {} hours - ignored: already triggered in {} hours.",
+                    bridgeConfiguration.tleUpdateTime, localReinitJob.getDelay(TimeUnit.HOURS));
             return;
         }
 
@@ -212,46 +203,47 @@ public class SpacetrackBridgeHandler extends BaseBridgeHandler {
 
         String queryIDs = String.join(",", noradIDs);
 
-        final SpacetrackClient client = new SpacetrackClient(bridgeConfiguration.spacetrackUser, bridgeConfiguration.spacetrackPass);
+        final SpacetrackClient client = new SpacetrackClient(bridgeConfiguration.spacetrackUser,
+                bridgeConfiguration.spacetrackPass);
         List<LatestTleQuery.LatestTle> tleData = client.getTLEData(queryIDs);
 
         // TODO: Finally we got the data \o/
         updateState(CHANNEL_LAST_UPDATE, new DateTimeType(ZonedDateTime.now()));
 
         for (LatestTleQuery.LatestTle tleEntry : tleData) {
-            //logger.error("Calculating overpass for Satellite {}", tleEntry.getCatalogNumber());
+            // logger.error("Calculating overpass for Satellite {}", tleEntry.getCatalogNumber());
             TLE tle = new TLE(tleEntry.getTleLine1(), tleEntry.getTleLine2());
 
             Calendar calendar = Calendar.getInstance();
 
-            AbsoluteDate initialDate = new AbsoluteDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DAY_OF_MONTH),
-                    calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), calendar.get(Calendar.SECOND),
-                    TimeScalesFactory.getUTC());
+            AbsoluteDate initialDate = new AbsoluteDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1,
+                    calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.HOUR_OF_DAY),
+                    calendar.get(Calendar.MINUTE), calendar.get(Calendar.SECOND), TimeScalesFactory.getUTC());
 
             TLEPropagator propagator = TLEPropagator.selectExtrapolator(tle);
 
             // Earth and frame
             double ae = 6378137.0; // equatorial radius in meter
             double f = 1.0 / 298.257223563; // flattening
-            Frame ITRF2005 = FramesFactory.getITRF(IERSConventions.IERS_2010, true); // terrestrial frame at an arbitrary date
+            Frame ITRF2005 = FramesFactory.getITRF(IERSConventions.IERS_2010, true); // terrestrial frame at an
+                                                                                     // arbitrary date
             BodyShape earth = new OneAxisEllipsoid(ae, f, ITRF2005);
 
             double lat = FastMath.toRadians(Double.parseDouble(this.bridgeConfiguration.locationLat));
             double lon = FastMath.toRadians(Double.parseDouble(this.bridgeConfiguration.locationLon));
             double altitude = Double.parseDouble(this.bridgeConfiguration.locationAlt);
             final GeodeticPoint geodeticPoint = new GeodeticPoint(lat, lon, altitude);
-            TopocentricFrame stationFrame = new TopocentricFrame(earth, geodeticPoint, StringUtils.isBlank(this.bridgeConfiguration.locationName) ? "Home" : this.bridgeConfiguration.locationName);
+            TopocentricFrame stationFrame = new TopocentricFrame(earth, geodeticPoint,
+                    StringUtils.isBlank(this.bridgeConfiguration.locationName) ? "Home"
+                            : this.bridgeConfiguration.locationName);
 
             VisibilityHandler visibilityHandler = new VisibilityHandler(initialDate);
             // Event definition
-            final double maxcheck  = 60.0;
-            final double threshold =  0.001;
+            final double maxcheck = 60.0;
+            final double threshold = 0.001;
             final double elevation = FastMath.toRadians(5.0);
-            final EventDetector homeVisible =
-                    new ElevationDetector(maxcheck, threshold, stationFrame).
-                            withConstantElevation(elevation).
-                            withHandler(visibilityHandler);
-
+            final EventDetector homeVisible = new ElevationDetector(maxcheck, threshold, stationFrame)
+                    .withConstantElevation(elevation).withHandler(visibilityHandler);
 
             propagator.addEventDetector(homeVisible);
 
@@ -300,11 +292,13 @@ public class SpacetrackBridgeHandler extends BaseBridgeHandler {
      * Checks for valid Spacetrack credentials
      */
     private boolean checkSpacetrackAuth(final SpacetrackBridgeConfiguration bridgeConfiguration) {
-        if (StringUtils.isBlank(bridgeConfiguration.spacetrackUser) || StringUtils.isBlank(bridgeConfiguration.spacetrackPass)) {
+        if (StringUtils.isBlank(bridgeConfiguration.spacetrackUser)
+                || StringUtils.isBlank(bridgeConfiguration.spacetrackPass)) {
             return false;
         }
 
-        final SpacetrackClient client = new SpacetrackClient(bridgeConfiguration.spacetrackUser, bridgeConfiguration.spacetrackPass);
+        final SpacetrackClient client = new SpacetrackClient(bridgeConfiguration.spacetrackUser,
+                bridgeConfiguration.spacetrackPass);
         if (!client.checkSpaceTrackAuth()) {
             return false;
         }

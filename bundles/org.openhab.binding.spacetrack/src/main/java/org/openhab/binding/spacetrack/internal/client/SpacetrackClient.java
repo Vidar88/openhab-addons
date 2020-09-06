@@ -1,20 +1,21 @@
 package org.openhab.binding.spacetrack.internal.client;
 
-import org.apache.commons.io.IOUtils;
-import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.openhab.binding.spacetrack.internal.client.credential.DefaultCredentialProvider;
-import org.openhab.binding.spacetrack.internal.client.predicate.Equal;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.openhab.binding.spacetrack.internal.SpacetrackBindingConstants.SPACETRACK_BASE_URL;
 
-import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
-import static org.openhab.binding.spacetrack.internal.SpacetrackBindingConstants.SPACETRACK_BASE_URL;
+import javax.net.ssl.HttpsURLConnection;
+
+import org.apache.commons.io.IOUtils;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.openhab.binding.spacetrack.internal.client.credential.DefaultCredentialProvider;
+import org.openhab.binding.spacetrack.internal.client.predicate.Equal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @NonNullByDefault
 public class SpacetrackClient {
@@ -48,16 +49,16 @@ public class SpacetrackClient {
             outputStream.flush();
 
             if (connection.getResponseCode() != HttpsURLConnection.HTTP_OK) {
-                logger.error("Invalid Spacetrack credentials." +
-                        " Make sure to set a valid username and password in the bridge configuration!");
+                logger.error("Invalid Spacetrack credentials."
+                        + " Make sure to set a valid username and password in the bridge configuration!");
                 return false;
             }
 
             // read the entire response
             String response = IOUtils.toString(connection.getInputStream(), "UTF-8");
             if (response.contains("Login") && response.contains("Failed")) {
-                logger.error("Invalid Spacetrack credentials." +
-                        " Make sure to set a valid username and password in the bridge configuration!");
+                logger.error("Invalid Spacetrack credentials."
+                        + " Make sure to set a valid username and password in the bridge configuration!");
                 return false;
             }
             logger.debug("SpaceTrack response message: {}", connection.getResponseMessage());
@@ -86,7 +87,9 @@ public class SpacetrackClient {
     public List<LatestTleQuery.LatestTle> getTLEData(String queryIDs) {
         try {
             DefaultCredentialProvider credentials = new DefaultCredentialProvider(this.username, this.password);
-            return new LatestTleQuery().setCredentials(credentials).addPredicate(new Equal<>(LatestTleQuery.LatestTleQueryField.ORDINAL, 1)).addPredicate(new Equal<>(LatestTleQuery.LatestTleQueryField.NORAD_CAT_ID, queryIDs)).execute();
+            return new LatestTleQuery().setCredentials(credentials)
+                    .addPredicate(new Equal<>(LatestTleQuery.LatestTleQueryField.ORDINAL, 1))
+                    .addPredicate(new Equal<>(LatestTleQuery.LatestTleQueryField.NORAD_CAT_ID, queryIDs)).execute();
         } catch (IOException e) {
             e.printStackTrace();
         }

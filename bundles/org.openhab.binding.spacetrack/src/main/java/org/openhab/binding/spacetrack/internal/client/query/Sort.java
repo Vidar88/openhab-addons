@@ -13,7 +13,6 @@
  */
 package org.openhab.binding.spacetrack.internal.client.query;
 
-
 import org.eclipse.jdt.annotation.NonNull;
 
 /**
@@ -23,44 +22,42 @@ import org.eclipse.jdt.annotation.NonNull;
  */
 public class Sort<T extends QueryField> {
 
-  public static enum Direction {
-    ASC, DESC
-  }
-
-  private T field;
-  private Direction direction;
-
-
-  public Sort(@NonNull T field) {
-
-    this.field = field;
-    this.direction = Direction.ASC;
-  }
-
-
-  public Sort(@NonNull T field, @NonNull Direction direction) {
-
-    this.field = field;
-    this.direction = direction;
-  }
-
-
-  public String toQueryParameter() {
-
-    if (direction == Direction.ASC) {
-      return field.getQueryFieldName() + " asc";
-    } else if (direction == Direction.DESC) {
-      return field.getQueryFieldName() + " desc";
-    } else {
-      throw new RuntimeException("Unsupported sort direction: " + direction);
+    public static enum Direction {
+        ASC,
+        DESC
     }
-  }
 
-  public T getField() {
-    return field;
-  }
+    private T field;
+    private Direction direction;
 
-  public Direction getDirection() {
-    return direction;
-  }
+    public Sort(@NonNull T field) {
+
+        this.field = field;
+        this.direction = Direction.ASC;
+    }
+
+    public Sort(@NonNull T field, @NonNull Direction direction) {
+
+        this.field = field;
+        this.direction = direction;
+    }
+
+    public String toQueryParameter() {
+
+        if (direction == Direction.ASC) {
+            return field.getQueryFieldName() + " asc";
+        } else if (direction == Direction.DESC) {
+            return field.getQueryFieldName() + " desc";
+        } else {
+            throw new RuntimeException("Unsupported sort direction: " + direction);
+        }
+    }
+
+    public T getField() {
+        return field;
+    }
+
+    public Direction getDirection() {
+        return direction;
+    }
 }

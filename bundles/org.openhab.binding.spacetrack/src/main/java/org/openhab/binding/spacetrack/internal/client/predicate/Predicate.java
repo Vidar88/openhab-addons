@@ -13,7 +13,6 @@
  */
 package org.openhab.binding.spacetrack.internal.client.predicate;
 
-
 import org.openhab.binding.spacetrack.internal.client.query.QueryField;
 
 /**
@@ -23,11 +22,11 @@ import org.openhab.binding.spacetrack.internal.client.query.QueryField;
  */
 public interface Predicate<T extends QueryField> {
 
-  /**
-   * Get the URL component the represents this predicate
-   * 
-   * @return A non-null query parameter in the form of a URL component
-   */
-  public String toQueryParameter();
+    /**
+     * Get the URL component the represents this predicate
+     * 
+     * @return A non-null query parameter in the form of a URL component
+     */
+    public String toQueryParameter();
 
 }

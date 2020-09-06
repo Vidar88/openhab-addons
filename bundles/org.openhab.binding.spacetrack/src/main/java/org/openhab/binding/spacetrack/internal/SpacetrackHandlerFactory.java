@@ -14,6 +14,10 @@ package org.openhab.binding.spacetrack.internal;
 
 import static org.openhab.binding.spacetrack.internal.SpacetrackBindingConstants.*;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.core.thing.Bridge;
@@ -26,16 +30,10 @@ import org.openhab.binding.spacetrack.internal.handler.SpacetrackBridgeHandler;
 import org.openhab.binding.spacetrack.internal.handler.SpacetrackSatelliteHandler;
 import org.orekit.data.ClasspathCrawler;
 import org.orekit.data.DataProvidersManager;
-import org.orekit.data.DirectoryCrawler;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * The {@link SpacetrackHandlerFactory} is responsible for creating things and thing

@@ -22,7 +22,6 @@ import org.openhab.binding.spacetrack.internal.client.util.SpaceTrackDateTimeFor
 import org.threeten.extra.scale.TaiInstant;
 import org.threeten.extra.scale.UtcInstant;
 
-
 /**
  * A {@link Predicate} that filters results based on whether or not the given field equals the given value
  * 
@@ -31,82 +30,76 @@ import org.threeten.extra.scale.UtcInstant;
 
 public class Equal<T extends QueryField> implements Predicate<T> {
 
-  private T field;
-  private String value;
+    private T field;
+    private String value;
 
+    public Equal(@NonNull T field, @NonNull String value) {
 
-  public Equal(@NonNull T field, @NonNull String value) {
+        this.field = field;
+        this.value = value;
+    }
 
-    this.field = field;
-    this.value = value;
-  }
+    public Equal(@NonNull T field, @NonNull Number value) {
 
+        this.field = field;
+        this.value = value.toString();
+    }
 
-  public Equal(@NonNull T field, @NonNull Number value) {
+    /**
+     * Create the predicate from a {@link Date} (UTC-SLS)
+     * 
+     * <p>
+     * <strong>Note:</strong> The conversion from UTC-SLS to UTC will not be completely accurate near a leap second. Use
+     * {@link #Equal(QueryField, UtcInstant)} or {@link #Equal(QueryField, TaiInstant)} if possible.
+     * </p>
+     */
+    public Equal(@NonNull T field, @NonNull Date value) {
 
-    this.field = field;
-    this.value = value.toString();
-  }
+        this.field = field;
+        this.value = SpaceTrackDateTimeFormatter.format(value);
+    }
 
+    /**
+     * Create the predicate from an {@link Instant} (UTC-SLS)
+     * 
+     * <p>
+     * <strong>Note:</strong> The conversion from UTC-SLS to UTC will not be completely accurate near a leap second. Use
+     * {@link #Equal(QueryField, UtcInstant)} or {@link #Equal(QueryField, TaiInstant)} if possible.
+     * </p>
+     */
+    public Equal(@NonNull T field, @NonNull Instant value) {
 
-  /**
-   * Create the predicate from a {@link Date} (UTC-SLS)
-   * 
-   * <p>
-   * <strong>Note:</strong> The conversion from UTC-SLS to UTC will not be completely accurate near a leap second. Use {@link #Equal(QueryField, UtcInstant)} or {@link #Equal(QueryField, TaiInstant)} if possible.
-   * </p>
-   */
-  public Equal(@NonNull T field, @NonNull Date value) {
+        this.field = field;
+        this.value = SpaceTrackDateTimeFormatter.format(value);
+    }
 
-    this.field = field;
-    this.value = SpaceTrackDateTimeFormatter.format(value);
-  }
+    public Equal(@NonNull T field, @NonNull UtcInstant value) {
 
+        this.field = field;
+        this.value = SpaceTrackDateTimeFormatter.format(value);
+    }
 
-  /**
-   * Create the predicate from an {@link Instant} (UTC-SLS)
-   * 
-   * <p>
-   * <strong>Note:</strong> The conversion from UTC-SLS to UTC will not be completely accurate near a leap second. Use {@link #Equal(QueryField, UtcInstant)} or {@link #Equal(QueryField, TaiInstant)} if possible.
-   * </p>
-   */
-  public Equal(@NonNull T field, @NonNull Instant value) {
+    public Equal(@NonNull T field, @NonNull TaiInstant value) {
 
-    this.field = field;
-    this.value = SpaceTrackDateTimeFormatter.format(value);
-  }
+        this.field = field;
+        this.value = SpaceTrackDateTimeFormatter.format(value);
+    }
 
+    public Equal(@NonNull T field, @NonNull CurrentDateTimeOffset currentDateTimeOffset) {
 
-  public Equal(@NonNull T field, @NonNull UtcInstant value) {
+        this.field = field;
+        this.value = currentDateTimeOffset.toQueryValue();
+    }
 
-    this.field = field;
-    this.value = SpaceTrackDateTimeFormatter.format(value);
-  }
+    public String toQueryParameter() {
+        return field.getQueryFieldName() + "/" + value;
+    }
 
+    public T getField() {
+        return field;
+    }
 
-  public Equal(@NonNull T field, @NonNull TaiInstant value) {
-
-    this.field = field;
-    this.value = SpaceTrackDateTimeFormatter.format(value);
-  }
-
-
-  public Equal(@NonNull T field, @NonNull CurrentDateTimeOffset currentDateTimeOffset) {
-
-    this.field = field;
-    this.value = currentDateTimeOffset.toQueryValue();
-  }
-
-
-  public String toQueryParameter() {
-    return field.getQueryFieldName() + "/" + value;
-  }
-
-  public T getField() {
-    return field;
-  }
-
-  public String getValue() {
-    return value;
-  }
+    public String getValue() {
+        return value;
+    }
 }

@@ -492,7 +492,6 @@ public class State {
         this.medionMotionDetectionState = state;
     }
 
-
     /**
      * @return the nextSunrise
      */

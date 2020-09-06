@@ -1,49 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <thing:thing-descriptions bindingId="spacetrack"
-                          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                          xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
-                          xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
 
-    <!--  noradID -->
-    <channel-type id="noradID">
-        <item-type>String</item-type>
-        <label>NORAD ID Channel</label>
-        <description>NORAD ID of the satellite.</description>
-        <state readOnly="true" />
-    </channel-type>
+	<!-- noradID -->
+	<channel-type id="noradID">
+		<item-type>String</item-type>
+		<label>NORAD ID Channel</label>
+		<description>NORAD ID of the satellite.</description>
+		<state readOnly="true" />
+	</channel-type>
 
-    <!--  displayName -->
-    <channel-type id="displayName">
-        <item-type>String</item-type>
-        <label>Display Name Channel</label>
-        <description>Channel for the display name of the satellite</description>
-        <state readOnly="true" />
-    </channel-type>
+	<!-- displayName -->
+	<channel-type id="displayName">
+		<item-type>String</item-type>
+		<label>Display Name Channel</label>
+		<description>Channel for the display name of the satellite</description>
+		<state readOnly="true" />
+	</channel-type>
 
-    <!-- lastUpdate -->
-    <channel-type id="lastUpdate">
-        <item-type>DateTime</item-type>
-        <label>Last TLE update</label>
-        <description>Shows the time of the last TLE update.</description>
-        <category>System</category>
-        <state readOnly="true" />
-    </channel-type>
+	<!-- lastUpdate -->
+	<channel-type id="lastUpdate">
+		<item-type>DateTime</item-type>
+		<label>Last TLE update</label>
+		<description>Shows the time of the last TLE update.</description>
+		<category>System</category>
+		<state readOnly="true" />
+	</channel-type>
 
-    <!-- overpasses -->
-    <channel-type id="overpasses">
-        <item-type>String</item-type>
-        <label>Overpasses</label>
-        <description>Information about next overpasses.</description>
-        <category>System</category>
-        <state readOnly="true" />
-    </channel-type>
+	<!-- overpasses -->
+	<channel-type id="overpasses">
+		<item-type>String</item-type>
+		<label>Overpasses</label>
+		<description>Information about next overpasses.</description>
+		<category>System</category>
+		<state readOnly="true" />
+	</channel-type>
 
-    <!-- directionImage -->
-    <channel-type id="directionImage">
-        <item-type>Image</item-type>
-        <label>Groundtrack</label>
-        <description>Shows ground track at your location to make spotting satellites easier!</description>
-        <category>System</category>
-        <state readOnly="true" />
-    </channel-type>
+	<!-- directionImage -->
+	<channel-type id="directionImage">
+		<item-type>Image</item-type>
+		<label>Groundtrack</label>
+		<description>Shows ground track at your location to make spotting satellites easier!</description>
+		<category>System</category>
+		<state readOnly="true" />
+	</channel-type>
 </thing:thing-descriptions>

@@ -23,33 +23,30 @@ import org.openhab.binding.spacetrack.internal.client.query.QueryField;
  */
 public class Contains<T extends QueryField> implements Predicate<T> {
 
-  private T field;
-  private String value;
+    private T field;
+    private String value;
 
+    public Contains(@NonNull T field, @NonNull String value) {
 
-  public Contains(@NonNull T field, @NonNull String value) {
+        this.field = field;
+        this.value = value;
+    }
 
-    this.field = field;
-    this.value = value;
-  }
+    public Contains(@NonNull T field, @NonNull Number value) {
 
+        this.field = field;
+        this.value = value.toString();
+    }
 
-  public Contains(@NonNull T field, @NonNull Number value) {
+    public String toQueryParameter() {
+        return field.getQueryFieldName() + "/~~" + value;
+    }
 
-    this.field = field;
-    this.value = value.toString();
-  }
+    public T getField() {
+        return field;
+    }
 
-
-  public String toQueryParameter() {
-    return field.getQueryFieldName() + "/~~" + value;
-  }
-
-  public T getField() {
-    return field;
-  }
-
-  public String getValue() {
-    return value;
-  }
+    public String getValue() {
+        return value;
+    }
 }

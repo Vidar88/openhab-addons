@@ -13,8 +13,6 @@
  */
 package org.openhab.binding.spacetrack.internal.client.predicate;
 
-
-import jdk.nashorn.internal.objects.annotations.Getter;
 import org.eclipse.jdt.annotation.NonNull;
 import org.openhab.binding.spacetrack.internal.client.query.QueryField;
 
@@ -26,19 +24,17 @@ import org.openhab.binding.spacetrack.internal.client.query.QueryField;
 
 public class IsNotNull<T extends QueryField> implements Predicate<T> {
 
-  private T field;
+    private T field;
 
+    public IsNotNull(@NonNull T field) {
+        this.field = field;
+    }
 
-  public IsNotNull(@NonNull T field) {
-    this.field = field;
-  }
+    public String toQueryParameter() {
+        return field.getQueryFieldName() + "/<>null-val";
+    }
 
-
-  public String toQueryParameter() {
-    return field.getQueryFieldName() + "/<>null-val";
-  }
-
-  public T getField() {
-    return field;
-  }
+    public T getField() {
+        return field;
+    }
 }

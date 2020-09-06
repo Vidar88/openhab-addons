@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.smarthome.config.discovery.DiscoveryService;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.Thing;
@@ -53,11 +52,11 @@ public class SomfyTahomaHandlerFactory extends BaseThingHandlerFactory {
 
     private Map<ThingUID, ServiceRegistration<?>> discoveryServiceRegs = new HashMap<>();
 
-    private final HttpClient httpClient;
+    private final HttpClientFactory httpClientFactory;
 
     @Activate
     public SomfyTahomaHandlerFactory(@Reference HttpClientFactory httpClientFactory) {
-        this.httpClient = httpClientFactory.getCommonHttpClient();
+        this.httpClientFactory = httpClientFactory;
     }
 
     @Override
@@ -73,7 +72,7 @@ public class SomfyTahomaHandlerFactory extends BaseThingHandlerFactory {
         logger.debug("Creating handler for {}", thing.getThingTypeUID().getId());
 
         if (thingTypeUID.equals(THING_TYPE_BRIDGE)) {
-            SomfyTahomaBridgeHandler handler = new SomfyTahomaBridgeHandler((Bridge) thing, httpClient);
+            SomfyTahomaBridgeHandler handler = new SomfyTahomaBridgeHandler((Bridge) thing, httpClientFactory);
             registerItemDiscoveryService(handler);
             return handler;
         } else if (thingTypeUID.equals(THING_TYPE_GATEWAY)) {
@@ -86,7 +85,8 @@ public class SomfyTahomaHandlerFactory extends BaseThingHandlerFactory {
             return new SomfyTahomaUnoRollerShutterHandler(thing);
         } else if (thingTypeUID.equals(THING_TYPE_SCREEN) || thingTypeUID.equals(THING_TYPE_EXTERIORSCREEN)) {
             return new SomfyTahomaRollerShutterHandler(thing);
-        } else if (thingTypeUID.equals(THING_TYPE_VENETIANBLIND) || thingTypeUID.equals(THING_TYPE_EXTERIORVENETIANBLIND)) {
+        } else if (thingTypeUID.equals(THING_TYPE_VENETIANBLIND)
+                || thingTypeUID.equals(THING_TYPE_EXTERIORVENETIANBLIND)) {
             return new SomfyTahomaVenetianBlindHandler(thing);
         } else if (thingTypeUID.equals(THING_TYPE_GARAGEDOOR)) {
             return new SomfyTahomaRollerShutterHandler(thing);
@@ -98,6 +98,8 @@ public class SomfyTahomaHandlerFactory extends BaseThingHandlerFactory {
             return new SomfyTahomaOnOffHandler(thing);
         } else if (thingTypeUID.equals(THING_TYPE_LIGHT)) {
             return new SomfyTahomaOnOffHandler(thing);
+        } else if (thingTypeUID.equals(THING_TYPE_DIMMER_LIGHT)) {
+            return new SomfyTahomaDimmerLightHandler(thing);
         } else if (thingTypeUID.equals(THING_TYPE_LIGHTSENSOR)) {
             return new SomfyTahomaLightSensorHandler(thing);
         } else if (thingTypeUID.equals(THING_TYPE_SMOKESENSOR)) {
@@ -122,6 +124,8 @@ public class SomfyTahomaHandlerFactory extends BaseThingHandlerFactory {
             return new SomfyTahomaHeatingSystemHandler(thing);
         } else if (thingTypeUID.equals(THING_TYPE_ONOFF_HEATING_SYSTEM)) {
             return new SomfyTahomaOnOffHeatingSystemHandler(thing);
+        } else if (thingTypeUID.equals(THING_TYPE_EXTERIOR_HEATING_SYSTEM)) {
+            return new SomfyTahomaExteriorHeatingSystemHandler(thing);
         } else if (thingTypeUID.equals(THING_TYPE_DOOR_LOCK)) {
             return new SomfyTahomaDoorLockHandler(thing);
         } else if (thingTypeUID.equals(THING_TYPE_PERGOLA)) {
@@ -171,8 +175,7 @@ public class SomfyTahomaHandlerFactory extends BaseThingHandlerFactory {
     private synchronized void registerItemDiscoveryService(SomfyTahomaBridgeHandler bridgeHandler) {
         SomfyTahomaItemDiscoveryService discoveryService = new SomfyTahomaItemDiscoveryService(bridgeHandler);
         discoveryService.activate(null);
-        this.discoveryServiceRegs.put(bridgeHandler.getThing().getUID(), bundleContext
-                .registerService(DiscoveryService.class.getName(), discoveryService, new Hashtable<String, Object>()));
-
+        this.discoveryServiceRegs.put(bridgeHandler.getThing().getUID(),
+                bundleContext.registerService(DiscoveryService.class.getName(), discoveryService, new Hashtable<>()));
     }
 }

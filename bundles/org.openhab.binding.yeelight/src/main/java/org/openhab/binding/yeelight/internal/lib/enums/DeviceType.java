@@ -25,6 +25,7 @@ public enum DeviceType {
     ceiling,
     ceiling1,
     ceiling3,
+    ceiling4,
     stripe,
     desklamp
 }

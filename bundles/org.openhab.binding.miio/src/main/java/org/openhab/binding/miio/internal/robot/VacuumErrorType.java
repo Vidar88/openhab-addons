@@ -12,12 +12,15 @@
  */
 package org.openhab.binding.miio.internal.robot;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+
 /**
  * List of Errors
  * derived from vacuum_cleaner-EN.pdf
  *
  * @author Marcel Verpaalen - Initial contribution
  */
+@NonNullByDefault
 public enum VacuumErrorType {
 
     ERROR00(0, "No error"),
@@ -44,6 +47,7 @@ public enum VacuumErrorType {
     ERROR21(21, "Laser pressure sensor problem"),
     ERROR22(22, "Charge sensor problem"),
     ERROR23(23, "Dock problem"),
+    ERROR24(24, "No-go zone or invisible wall detected"),
     ERROR254(254, "Bin full"),
     ERROR255(255, "Internal error"),
     UNKNOWN(-1, "Unknown Error");

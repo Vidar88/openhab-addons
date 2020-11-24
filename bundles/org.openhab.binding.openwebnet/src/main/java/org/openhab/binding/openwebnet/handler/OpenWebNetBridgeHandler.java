@@ -43,6 +43,7 @@ import org.openwebnet4j.OpenGateway;
 import org.openwebnet4j.USBGateway;
 import org.openwebnet4j.communication.OWNAuthException;
 import org.openwebnet4j.communication.OWNException;
+import org.openwebnet4j.message.Automation;
 import org.openwebnet4j.message.BaseOpenMessage;
 import org.openwebnet4j.message.FrameException;
 import org.openwebnet4j.message.GatewayMgmt;
@@ -176,7 +177,7 @@ public class OpenWebNetBridgeHandler extends ConfigStatusBridgeHandler implement
         logger.debug("handleCommand (command={} - channel={})", command, channelUID);
         OpenGateway gw = gateway;
         if (gw != null && !gw.isConnected()) {
-            logger.warn("BridgeHandler gateway is NOT connected, skipping command");
+            logger.warn("Gateway is NOT connected, skipping command");
             return;
         } else {
             logger.warn("Channel not supported: channel={}", channelUID);
@@ -313,14 +314,24 @@ public class OpenWebNetBridgeHandler extends ConfigStatusBridgeHandler implement
     /**
      * Un-register a device from this bridge handler
      *
-     * @param oId the device OpenWebNet id
+     * @param ownId the device OpenWebNet id
      */
-    protected void unregisterDevice(String oId) {
-        if (registeredDevices.remove(oId) != null) {
-            logger.debug("un-registered device ownId={}", oId);
+    protected void unregisterDevice(String ownId) {
+        if (registeredDevices.remove(ownId) != null) {
+            logger.debug("un-registered device ownId={}", ownId);
         } else {
-            logger.warn("could not un-register ownId={} (not found)", oId);
+            logger.warn("could not un-register ownId={} (not found)", ownId);
         }
+    }
+
+    /**
+     * Get an already registered device on this bridge handler
+     *
+     * @param ownId the device OpenWebNet id
+     * @return the registered device Thing handler or null if the id cannot be found
+     */
+    public @Nullable OpenWebNetThingHandler getRegisteredDevice(String ownId) {
+        return registeredDevices.get(ownId);
     }
 
     @Override
@@ -341,7 +352,7 @@ public class OpenWebNetBridgeHandler extends ConfigStatusBridgeHandler implement
 
         BaseOpenMessage baseMsg = (BaseOpenMessage) msg;
         // let's try to get the Thing associated with this message...
-        if (baseMsg instanceof Lighting) {
+        if (baseMsg instanceof Lighting || baseMsg instanceof Automation) {
             String ownId = ownIdFromMessage(baseMsg);
             logger.debug("ownId={}", ownId);
             OpenWebNetThingHandler deviceHandler = registeredDevices.get(ownId);

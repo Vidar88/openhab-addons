@@ -330,18 +330,12 @@ public abstract class YeelightHandlerBase extends BaseThingHandler
                 ? new HSBType(new DecimalType(status.getHue()), new PercentType(status.getSat()), brightness)
                 : new HSBType(tempHsbType.getHue(), tempHsbType.getSaturation(), brightness);
 
-        logger.debug("Update Power->{}", status.isPowerOff());
-        updateState(CHANNEL_POWER, status.isPowerOff() ? OnOffType.OFF : OnOffType.ON);
-
         logger.debug("Update Color->{}", hsbType);
         updateState(CHANNEL_COLOR, hsbType);
 
         logger.debug("Update CT->{}", status.getCt());
         updateState(CHANNEL_COLOR_TEMPERATURE,
                 new PercentType((status.getCt() - COLOR_TEMPERATURE_MINIMUM) / COLOR_TEMPERATURE_STEP));
-
-        logger.debug("Update Brightness->{}", status.getCt());
-        updateState(CHANNEL_BRIGHTNESS, new PercentType(status.getBrightness()));
     }
 
     int getDuration() {

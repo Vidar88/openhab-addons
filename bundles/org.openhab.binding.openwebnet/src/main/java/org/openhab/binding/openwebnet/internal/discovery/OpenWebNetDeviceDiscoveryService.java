@@ -115,6 +115,20 @@ public class OpenWebNetDeviceDiscoveryService extends AbstractDiscoveryService
                 thingLabel = OpenWebNetBindingConstants.THING_LABEL_BUS_DIMMER;
                 deviceWho = Who.LIGHTING;
                 break;
+            case SCS_SHUTTER_SWITCH:
+            case SCS_SHUTTER_CONTROL: {
+                thingTypeUID = OpenWebNetBindingConstants.THING_TYPE_BUS_AUTOMATION;
+                thingLabel = OpenWebNetBindingConstants.THING_LABEL_BUS_AUTOMATION;
+                deviceWho = Who.AUTOMATION;
+                break;
+            }
+            case ZIGBEE_SHUTTER_SWITCH:
+            case ZIGBEE_SHUTTER_CONTROL: {
+                thingTypeUID = OpenWebNetBindingConstants.THING_TYPE_ZB_AUTOMATION;
+                thingLabel = OpenWebNetBindingConstants.THING_LABEL_ZB_AUTOMATION;
+                deviceWho = Who.AUTOMATION;
+                break;
+            }
             default:
                 logger.warn("Device type {} is not supported, default to GENERIC device (WHERE={})", deviceType, where);
                 if (where instanceof WhereZigBee) {
@@ -124,6 +138,15 @@ public class OpenWebNetDeviceDiscoveryService extends AbstractDiscoveryService
                     deviceWho = baseMsg.getWho();
                 }
         }
+
+        String ownId = bridgeHandler.ownIdFromWhoWhere(where, deviceWho);
+        if (thingTypeUID == OpenWebNetBindingConstants.THING_TYPE_BUS_ON_OFF_SWITCH) {
+            if (bridgeHandler.getRegisteredDevice(ownId) != null) {
+                logger.debug("dimmer/switch with WHERE={} already registered, skipping this discovery result", where);
+                return;
+            }
+        }
+
         String tId = bridgeHandler.thingIdFromWhere(where);
         ThingUID thingUID = new ThingUID(thingTypeUID, bridgeUID, tId);
 
@@ -145,7 +168,7 @@ public class OpenWebNetDeviceDiscoveryService extends AbstractDiscoveryService
         }
         Map<String, Object> properties = new HashMap<>(2);
         properties.put(OpenWebNetBindingConstants.CONFIG_PROPERTY_WHERE, bridgeHandler.normalizeWhere(where));
-        properties.put(OpenWebNetBindingConstants.PROPERTY_OWNID, bridgeHandler.ownIdFromWhoWhere(where, deviceWho));
+        properties.put(OpenWebNetBindingConstants.PROPERTY_OWNID, ownId);
         if (thingTypeUID == OpenWebNetBindingConstants.THING_TYPE_GENERIC_DEVICE) {
             thingLabel = thingLabel + " (WHO=" + deviceWho + ", WHERE=" + whereLabel + ")";
         } else {

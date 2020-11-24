@@ -464,9 +464,23 @@
 		<state>
 			<options>
 				<option value="0">Stop</option>
-				<option value="1">Start</option>
+				<option value="1">Vacuum</option>
 				<option value="2">Pause</option>
 			</options>
 		</state>
+	</channel-type>
+	<channel-type id="dreameControl">
+		<item-type>String</item-type>
+		<label>Control Vacuum</label>
+		<command>
+			<options>
+				<option value="vacuum">Vacuum</option>
+				<option value="pause">Pause</option>
+				<option value="stop">Stop</option>
+				<option value="dock">Dock</option>
+				<option value="sweep">Sweep</option>
+				<option value="stopsweep">Stop Sweep</option>
+			</options>
+		</command>
 	</channel-type>
 </thing:thing-descriptions>

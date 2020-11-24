@@ -41,7 +41,6 @@ public class YeelightBindingConstants {
     public static final String PARAMETER_DURATION = "duration";
 
     // List of all Channel ids
-    public static final String CHANNEL_POWER = "power";
     public static final String CHANNEL_BRIGHTNESS = "brightness";
     public static final String CHANNEL_COLOR = "color";
     public static final String CHANNEL_COLOR_TEMPERATURE = "colorTemperature";

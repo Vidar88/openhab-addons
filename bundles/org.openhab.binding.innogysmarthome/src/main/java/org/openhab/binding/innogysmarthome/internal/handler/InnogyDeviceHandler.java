@@ -551,11 +551,24 @@ public class InnogyDeviceHandler extends BaseThingHandler implements DeviceStatu
                         }
                         break;
                     case Capability.TYPE_MOTIONDETECTIONSENSOR:
-                        final Integer motionState = c.getCapabilityState().getMotionDetectionSensorState();
-                        if (motionState != null) {
-                            final DecimalType motionCount = new DecimalType(motionState);
-                            logger.debug("Motion state {} -> count {}", motionState, motionCount);
-                            updateState(CHANNEL_MOTION_COUNT, motionCount);
+                        if (device.getManufacturer().equals("Medion")) {
+                            final boolean motionDetected = c.getCapabilityState().getMedionMotionDetectionState();
+                            logger.debug("Motion state {}", motionDetected);
+                            updateState(CHANNEL_MOTION, motionDetected ? OnOffType.ON : OnOffType.OFF);
+                        } else {
+                            final Integer motionState = c.getCapabilityState().getMotionDetectionSensorState();
+                            if (motionState != null) {
+                                final DecimalType motionCount = new DecimalType(motionState);
+                                logger.debug("Motion state {} -> count {}", motionState, motionCount);
+                                updateState(CHANNEL_MOTION_COUNT, motionCount);
+                            }
+                        }
+                        break;
+                    case Capability.TYPE_MEDIONMOTIONDETECTIONSENSOR:
+                        final Boolean medionMotionState = c.getCapabilityState().getMedionMotionDetectionState();
+                        if (medionMotionState != null) {
+                            logger.debug("Motion state {}", medionMotionState);
+                            updateState(CHANNEL_MOTION, medionMotionState ? OnOffType.ON : OnOffType.OFF);
                         } else {
                             logger.debug("State for {} is STILL NULL!! cstate-id: {}, c-id: {}", c.getType(),
                                     c.getCapabilityState().getId(), c.getId());
@@ -803,9 +816,18 @@ public class InnogyDeviceHandler extends BaseThingHandler implements DeviceStatu
 
                         // MotionDetectionSensor
                     } else if (capability.isTypeMotionDetectionSensor()) {
-                        capabilityState.setMotionDetectionSensorState(event.getProperties().getMotionDetectedCount());
+                        if (device.getManufacturer().equals("Medion")) {
+                            capabilityState
+                                    .setMedionMotionDetectionSensorState(event.getProperties().getMotionDetected());
+                        } else {
+                            capabilityState
+                                    .setMotionDetectionSensorState(event.getProperties().getMotionDetectedCount());
+                        }
                         deviceChanged = true;
-
+                        // MotionDetectionSensor Medion
+                    } else if (capability.isTypeMedionMotionDetectionSensor()) {
+                        capabilityState.setMedionMotionDetectionSensorState(event.getProperties().getMotionDetected());
+                        deviceChanged = true;
                         // LuminanceSensor
                     } else if (capability.isTypeLuminanceSensor()) {
                         capabilityState.setLuminanceSensorState(event.getProperties().getLuminance());

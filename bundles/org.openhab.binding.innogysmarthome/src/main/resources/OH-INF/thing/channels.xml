@@ -140,6 +140,15 @@
 		<state readOnly="true"></state>
 	</channel-type>
 
+	<!-- MotionDetectionSensor Channel -->
+	<channel-type id="MedionMotionDetectionSensor">
+		<item-type>Switch</item-type>
+		<label>Motion</label>
+		<description>Motion</description>
+		<category>Switch</category>
+		<state readOnly="true"></state>
+	</channel-type>
+
 	<!-- LuminanceSensor Channel -->
 	<channel-type id="LuminanceSensor">
 		<item-type>Number</item-type>

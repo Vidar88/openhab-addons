@@ -96,6 +96,9 @@ public class State {
     @SerializedName("motionDetectedCount")
     private IntegerState motionDetectedCountState;
 
+    @SerializedName("motionDetected")
+    private BooleanState medionMotionDetectionState;
+
     @SerializedName("nextSunrise")
     private DateTimeState nextSunrise;
 
@@ -473,6 +476,20 @@ public class State {
      */
     public void setMotionDetectedCountState(IntegerState state) {
         this.motionDetectedCountState = state;
+    }
+
+    /**
+     * @return the motionDetectedState
+     */
+    public BooleanState getMedionMotionDetectionState() {
+        return medionMotionDetectionState;
+    }
+
+    /**
+     * @param state the motionDetectedState to set
+     */
+    public void setMedionMotionDetectionState(BooleanState state) {
+        this.medionMotionDetectionState = state;
     }
 
     /**

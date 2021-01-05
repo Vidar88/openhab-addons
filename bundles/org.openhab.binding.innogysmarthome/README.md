@@ -34,6 +34,7 @@ The channels are described in detail in the next chapter.
 |        | VariableActuator                                                         | switch                                                                                                                    |
 | WDS    | Window Door Sensor                                                       | contact, battery_low                                                                                                      |
 | WMD    | Wall Mounted Motion Detector, indoor                                     | motion_count, luminance, battery_low                                                                                      |
+| BT-WMD | Wall Mounted Motion Detector, indoor                                     | motion_count, luminance, battery_low                                                                                      |
 | WMDO   | Wall Mounted Motion Detector, outdoor                                    | motion_count, luminance, battery_low                                                                                      |
 | WRT    | Wall Mounted Room Thermostat                                             | set_temperature, temperature, humidity, battery_low                                                                       |
 | WSC2   | Wall Mounted Smart Controller                                            | button1, button2, button1_count, button2_count, battery_low                                                               |

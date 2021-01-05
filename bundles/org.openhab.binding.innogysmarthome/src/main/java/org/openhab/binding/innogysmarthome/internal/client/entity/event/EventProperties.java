@@ -80,6 +80,8 @@ public class EventProperties {
 
     private Integer motionDetectedCount;
 
+    private Boolean motionDetected;
+
     private Double powerConsumptionWatt;
 
     private Double powerInWatt;
@@ -466,6 +468,20 @@ public class EventProperties {
      */
     public void setMotionDetectedCount(final Integer motionDetectedCount) {
         this.motionDetectedCount = motionDetectedCount;
+    }
+
+    /**
+     * @return the motionDetected
+     */
+    public Boolean getMotionDetected() {
+        return motionDetected;
+    }
+
+    /**
+     * @param motionDetected the motionDetected to set
+     */
+    public void setMotionDetected(final Boolean motionDetected) {
+        this.motionDetected = motionDetected;
     }
 
     /**
